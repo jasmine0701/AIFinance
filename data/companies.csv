@@ -1,0 +1,10 @@
+company_id,name,industry,size_category,data_source
+1,LLP Stable-1,Logistics,SME,synthetic_normal
+2,LLP Stable-2,Construction,SME,synthetic_normal
+3,LLP Stable-3,Construction,SME,synthetic_normal
+4,LLP Stable-4,Trade,SME,synthetic_normal
+5,LLP Stable-5,Construction,SME,synthetic_normal
+6,LLP Stable-6,Construction,SME,synthetic_normal
+7,LLP HighRisk-1,Logistics,SME,synthetic_scenario
+8,LLP HighRisk-2,Construction,SME,synthetic_scenario
+9,LLP HighRisk-3,Construction,SME,synthetic_scenario

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finguard — AI-аналитика рисков для банков</title>
+<style>
+:root{
+  --navy:#0C1E3E; --blue:#2F6FED; --blue-dark:#1F4FC4; --blue-soft:#EAF1FE;
+  --bg:#FFFFFF; --bg-soft:#F6F9FD; --text:#16213A; --muted:#66748F; --line:#E6ECF5;
+  --green:#16A34A; --green-bg:#E9F8EE;
+  --orange:#E08A1E; --orange-bg:#FDF3E2;
+  --red:#E14B4B; --red-bg:#FCEBEB;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.5;}
+a{text-decoration:none;color:inherit;}
+img,svg{display:block;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--blue);text-transform:uppercase;}
+.muted{color:var(--muted);}
+.card{background:var(--bg);border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px -16px rgba(12,30,62,.15);}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14.5px;border-radius:10px;cursor:pointer;border:none;}
+.btn-primary{background:var(--blue);color:#fff;padding:13px 22px;}
+.btn-primary:hover{background:var(--blue-dark);}
+.btn-ghost{background:transparent;color:var(--navy);padding:13px 4px;}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.02em;}
+.badge-LOW{background:var(--green-bg);color:var(--green);}
+.badge-MEDIUM{background:var(--orange-bg);color:var(--orange);}
+.badge-HIGH{background:var(--red-bg);color:var(--red);}
+.icon-circle{width:38px;height:38px;border-radius:10px;background:var(--blue-soft);display:flex;align-items:center;justify-content:center;flex:none;}
+
+/* header */
+.site-header{border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:20;}
+.site-header .wrap{display:flex;align-items:center;justify-content:space-between;height:76px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-text b{font-size:19px;color:var(--navy);}
+.brand-sub{font-size:10.5px;font-weight:700;letter-spacing:.07em;color:var(--muted);}
+nav{display:flex;gap:32px;font-size:14.5px;color:var(--navy);}
+nav a:hover{color:var(--blue);}
+.header-right{display:flex;align-items:center;gap:28px;}
+@media(max-width:900px){nav{display:none;}}
+
+/* hero */
+.hero{background:linear-gradient(180deg,#F8FBFF 0%,#fff 55%);padding:64px 0 80px;}
+.hero-inner{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:start;}
+@media(max-width:980px){.hero-inner{grid-template-columns:1fr;}}
+.hero h1{font-size:44px;line-height:1.18;font-weight:800;color:var(--navy);margin:16px 0 18px;}
+.hero h1 span{color:var(--blue);}
+.hero p.lead{font-size:16px;color:var(--muted);max-width:52ch;margin-bottom:26px;}
+.perks{display:flex;gap:14px;margin-bottom:30px;flex-wrap:wrap;}
+.perk{display:flex;align-items:center;gap:9px;background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:12.5px;color:var(--navy);font-weight:600;max-width:220px;}
+.perk svg{flex:none;}
+
+/* upload card */
+.upload-card{padding:26px;margin-top:6px;}
+.upload-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:2px;}
+.upload-sub{font-size:13px;color:var(--muted);margin-bottom:16px;}
+.dropzone{border:1.5px dashed #C4D3EE;border-radius:14px;background:var(--bg-soft);padding:34px 20px;text-align:center;cursor:pointer;transition:.15s;}
+.dropzone.drag,.dropzone:hover{border-color:var(--blue);background:var(--blue-soft);}
+.dropzone input{display:none;}
+.dz-formats{font-size:12px;color:var(--muted);margin:10px 0 16px;}
+.file-info{display:none;align-items:center;justify-content:space-between;background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-top:14px;}
+.file-info.show{display:flex;}
+.file-info .fname{font-size:13.5px;font-weight:600;}
+.file-info .fsize{font-size:12px;color:var(--muted);}
+.analyze-row{margin-top:14px;display:none;}
+.analyze-row.show{display:block;}
+.loading{display:none;margin-top:16px;}
+.loading.show{display:block;}
+.loading .headline{font-size:13.5px;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.spinner{width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.load-steps{list-style:none;font-size:12.5px;color:var(--muted);}
+.load-steps li{padding:4px 0;opacity:.4;transition:.2s;}
+.load-steps li.active{opacity:1;color:var(--navy);font-weight:600;}
+
+/* dynamic result */
+.result-panel{display:none;margin-top:18px;padding:22px;}
+.result-panel.show{display:block;}
+.res-head{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:14px;}
+.res-company{font-size:15.5px;font-weight:700;color:var(--navy);}
+.res-score{display:flex;align-items:baseline;gap:6px;}
+.res-score b{font-size:26px;color:var(--navy);}
+.metrics-mini{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.metrics-mini div{background:var(--bg-soft);border-radius:10px;padding:10px 12px;}
+.metrics-mini .l{font-size:11px;color:var(--muted);}
+.metrics-mini .v{font-size:14px;font-weight:700;}
+.res-list{font-size:12.5px;margin-top:4px;}
+.res-list div{padding:4px 0;display:flex;gap:8px;align-items:flex-start;}
+
+/* hero right dashboard mock */
+.dash{padding:18px;}
+.dash-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line);}
+.dash-brand{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--navy);}
+.dash-status{font-size:11px;color:var(--green);font-weight:700;display:flex;align-items:center;gap:5px;}
+.dash-company{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.dash-company .name{font-size:15px;font-weight:700;color:var(--navy);}
+.dash-company .date{font-size:11px;color:var(--muted);}
+.dash-score{text-align:right;}
+.dash-score .num{font-size:20px;font-weight:800;color:var(--navy);}
+.grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.stat-box{background:var(--bg-soft);border-radius:10px;padding:10px 12px;}
+.stat-box .l{font-size:11px;color:var(--muted);}
+.stat-box .v{font-size:16px;font-weight:700;}
+.stat-box .d{font-size:11px;font-weight:700;}
+.d-down{color:var(--red);} .d-up{color:var(--green);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.mini-title{font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:6px;}
+.mini-list{font-size:12px;display:flex;flex-direction:column;gap:6px;}
+.mini-list div{display:flex;gap:6px;align-items:flex-start;}
+
+/* steps */
+.steps{padding:80px 0;}
+.steps h2{font-size:30px;font-weight:800;color:var(--navy);}
+.steps .sub{color:var(--muted);margin-top:8px;margin-bottom:40px;}
+.steps-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;align-items:start;position:relative;}
+@media(max-width:900px){.steps-row{grid-template-columns:1fr;gap:28px;}}
+.step{padding:0 16px;position:relative;}
+.step-num{font-size:12px;font-weight:800;color:var(--blue);margin-bottom:10px;}
+.step .icon-circle{margin-bottom:14px;background:var(--navy);}
+.step h3{font-size:15.5px;font-weight:700;margin-bottom:6px;}
+.step p{font-size:13px;color:var(--muted);}
+.arrow{position:absolute;top:19px;right:-10px;color:#C7D4EA;}
+@media(max-width:900px){.arrow{display:none;}}
+
+/* cycle section */
+.cycle{background:var(--bg-soft);padding:80px 0;}
+.cycle h2{font-size:32px;font-weight:800;color:var(--navy);margin:14px 0 12px;}
+.cycle .sub{color:var(--muted);max-width:60ch;margin-bottom:40px;}
+.cycle-inner{display:grid;grid-template-columns:.85fr 1.3fr;gap:48px;align-items:start;}
+@media(max-width:980px){.cycle-inner{grid-template-columns:1fr;}}
+.check-list{display:flex;flex-direction:column;gap:14px;margin-top:20px;}
+.check-list div{display:flex;gap:12px;align-items:center;font-size:14.5px;font-weight:600;color:var(--navy);}
+.check-ico{width:22px;height:22px;border-radius:6px;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;flex:none;}
+
+.big-dash{padding:20px;}
+.bd-top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px;}
+.bd-company{font-size:15px;font-weight:700;color:var(--navy);}
+.bd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+@media(max-width:700px){.bd-grid{grid-template-columns:repeat(2,1fr);}}
+.bd-stat{background:var(--bg-soft);border-radius:12px;padding:12px;}
+.bd-stat .l{font-size:11px;color:var(--muted);margin-bottom:4px;}
+.bd-stat .v{font-size:17px;font-weight:800;color:var(--navy);}
+.bd-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+@media(max-width:700px){.bd-cols{grid-template-columns:1fr;}}
+.fact{display:flex;gap:8px;font-size:13px;padding:6px 0;align-items:flex-start;}
+.credit-card{background:var(--navy);color:#fff;border-radius:14px;padding:18px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.credit-card .title{font-size:13px;font-weight:700;margin-bottom:12px;color:#AFC3EE;}
+.credit-card .lim{font-size:12px;color:#AFC3EE;}
+.credit-card .lim b{display:block;font-size:19px;color:#fff;font-weight:800;margin-top:2px;}
+.credit-card .note{font-size:12px;color:#C8D6F2;max-width:34ch;}
+.credit-delta{font-size:20px;font-weight:800;color:#FF9B7A;}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5v6c0 5 3.4 8.7 8 9.9 4.6-1.2 8-4.9 8-9.9V5l-8-3z" fill="#2F6FED"/><path d="M9 12.3l2 2 4-4.4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="brand-text"><b>Finguard</b><div class="brand-sub">AI-АНАЛИТИКА РИСКОВ ДЛЯ БАНКОВ</div></div>
+    </div>
+    <nav><a href="#how">Как это работает</a><a href="#cycle">Возможности</a><a href="#">Преимущества</a><a href="#">FAQ</a></nav>
+    <div class="header-right"><a href="#" class="btn btn-ghost">Войти</a></div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-left">
+      <div class="eyebrow">Банковский риск-продукт</div>
+      <h1>Анализируйте финансовую отчетность<br><span>и оценивайте риски за минуты</span></h1>
+      <p class="lead">Загрузите Excel с финансовой отчетностью компании — Finguard автоматически анализирует ключевые показатели, выявляет финансовые риски и помогает принять обоснованное решение.</p>
+
+      <div class="perks">
+        <div class="perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="#2F6FED"/></svg>Ответ обычно готов меньше чем за минуту</div>
+        <div class="perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5v6c0 5 3.4 8.7 8 9.9 4.6-1.2 8-4.9 8-9.9V5l-8-3z" fill="#2F6FED"/></svg>Файл используется только для анализа</div>
+        <div class="perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" fill="#2F6FED"/><path d="M8 11V7a4 4 0 018 0v4" stroke="#2F6FED" stroke-width="1.8"/></svg>Ваши данные в безопасности</div>
+      </div>
+
+      <div class="card upload-card">
+        <div class="upload-title">Загрузите Excel (.xlsx)</div>
+        <div class="upload-sub">Финансовая отчетность компании</div>
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" accept=".xlsx">
+          <svg width="30" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 10px"><path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="#2F6FED" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3" stroke="#9DB4DE" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <div style="font-size:14px;font-weight:600;">Перетащите файл сюда</div>
+          <div class="dz-formats">.xlsx</div>
+          <span class="btn btn-primary" id="chooseBtn">Выбрать файл →</span>
+        </div>
+
+        <div class="file-info" id="fileInfo">
+          <div><div class="fname" id="fname"></div><div class="fsize" id="fsize"></div></div>
+          <span class="btn btn-primary" id="analyzeBtn" style="padding:9px 16px;">Анализировать</span>
+        </div>
+
+        <div class="loading" id="loading">
+          <div class="headline"><span class="spinner"></span>Анализируем финансовую отчётность…</div>
+          <ul class="load-steps" id="loadSteps">
+            <li>Распознаём показатели</li>
+            <li>Анализируем финансовое состояние</li>
+            <li>Рассчитываем риски</li>
+            <li>Формируем рекомендации</li>
+          </ul>
+        </div>
+
+        <div id="errorBox" style="display:none;margin-top:14px;padding:12px 14px;border-radius:10px;background:#FEF3F2;color:#B42318;font-size:13px;line-height:1.4;"></div>
+
+        <div class="card result-panel" id="resultPanel" style="border:none;box-shadow:none;background:var(--bg-soft);">
+          <div class="res-head">
+            <div><div class="res-company" id="resCompany">—</div><div class="muted" style="font-size:12px;">Анализ завершён</div></div>
+            <div class="res-score"><b id="resScore">—</b><span class="badge" id="resBadge">—</span></div>
+          </div>
+          <div class="metrics-mini">
+            <div><div class="l">Финансовый риск</div><div class="v" id="resFin">—</div></div>
+            <div><div class="l">Риск транзакций</div><div class="v" id="resTx">—</div></div>
+            <div><div class="l">Запрошенный лимит</div><div class="v" id="resReq">—</div></div>
+            <div><div class="l">Рекомендуемый лимит</div><div class="v" id="resRec">—</div></div>
+          </div>
+          <div class="mini-title">ОСНОВНЫЕ РИСКИ</div>
+          <div class="res-list" id="resFactors"></div>
+          <div class="mini-title" style="margin-top:10px;">РЕКОМЕНДАЦИИ</div>
+          <div class="res-list" id="resActions"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="card dash">
+        <div class="dash-top">
+          <div class="dash-brand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5v6c0 5 3.4 8.7 8 9.9 4.6-1.2 8-4.9 8-9.9V5l-8-3z" fill="#2F6FED"/></svg>Finguard</div>
+          <div class="dash-status">✓ Анализ завершён</div>
+        </div>
+        <div class="dash-company">
+          <div><div class="name">ООО «Альфа Плюс»</div><div class="date">25.04.2025, 14:32</div></div>
+          <div class="dash-score"><div class="num">55.0</div><span class="badge badge-MEDIUM">MEDIUM</span></div>
+        </div>
+        <div class="grid4">
+          <div class="stat-box"><div class="l">Выручка</div><div class="v">−19% <span class="d-down"></span></div></div>
+          <div class="stat-box"><div class="l">Чистая прибыль</div><div class="v">−32%</div></div>
+          <div class="stat-box"><div class="l">Долг / EBITDA</div><div class="v">2.8</div></div>
+          <div class="stat-box"><div class="l">Рентабельность</div><div class="v">4.7%</div></div>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="mini-title">ОСНОВНЫЕ РИСКИ</div>
+            <div class="mini-list">
+              <div>🔴 Снижение выручки</div>
+              <div>🟠 Высокая долговая нагрузка</div>
+              <div>🟠 Снижение рентабельности</div>
+            </div>
+          </div>
+          <div>
+            <div class="mini-title">РЕКОМЕНДАЦИИ</div>
+            <div class="mini-list">
+              <div>✓ Усиленный анализ аналитиком</div>
+              <div>✓ Запросить обновлённую отчётность</div>
+              <div>✓ Мониторинг раз в квартал</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="steps" id="how">
+  <div class="wrap">
+    <h2>Как это работает</h2>
+    <div class="sub">Всего 4 простых шага — и вы получаете готовый анализ рисков.</div>
+    <div class="steps-row">
+      <div class="step"><div class="step-num">01</div><div class="icon-circle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Загрузите Excel</h3><p>Файл с финансовой отчётностью компании.</p><span class="arrow">›</span></div>
+      <div class="step"><div class="step-num">02</div><div class="icon-circle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="1.8"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Автоматическое распознавание</h3><p>Система извлекает и обрабатывает ключевые финансовые показатели.</p><span class="arrow">›</span></div>
+      <div class="step"><div class="step-num">03</div><div class="icon-circle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 19V9m6 10V5m6 14v-7" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Расчёт риска</h3><p>Анализируем финансовое состояние и рассчитываем итоговый risk score.</p><span class="arrow">›</span></div>
+      <div class="step"><div class="step-num">04</div><div class="icon-circle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 4h9l3 3v13H6z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12h6M9 16h6" stroke="#fff" stroke-width="1.6"/></svg></div><h3>Готовый результат</h3><p>Структурированный анализ, риски, рекомендации и основа для решения.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cycle" id="cycle">
+  <div class="wrap">
+    <div class="eyebrow" style="background:var(--blue-soft);padding:6px 12px;border-radius:20px;display:inline-block;">Пример результата</div>
+    <h2>Полный цикл анализа в одном окне</h2>
+    <div class="sub">От финансовой отчётности до обоснованного решения — без ручного анализа десятков показателей.</div>
+    <div class="cycle-inner">
+      <div>
+        <div class="check-list">
+          <div><span class="check-ico">✓</span>Анализ финансовых показателей</div>
+          <div><span class="check-ico">✓</span>Выявление ключевых изменений</div>
+          <div><span class="check-ico">✓</span>Расчёт финансового риска</div>
+          <div><span class="check-ico">✓</span>Определение факторов риска</div>
+          <div><span class="check-ico">✓</span>Рекомендации по дальнейшим действиям</div>
+          <div><span class="check-ico">✓</span>Кредитное решение</div>
+        </div>
+      </div>
+      <div class="card big-dash">
+        <div class="bd-top">
+          <div><div class="bd-company">Результат анализа — ООО «Альфа Плюс»</div><div class="muted" style="font-size:12px;">Финансовый анализ</div></div>
+          <div class="dash-status">✓ Анализ завершён</div>
+        </div>
+        <div class="bd-grid">
+          <div class="bd-stat"><div class="l">Общий риск</div><div class="v">55.0</div><span class="badge badge-MEDIUM">MEDIUM</span></div>
+          <div class="bd-stat"><div class="l">Финансовый риск</div><div class="v" style="font-size:14px;">MEDIUM</div><span class="badge badge-MEDIUM">MEDIUM</span></div>
+          <div class="bd-stat"><div class="l">Риск транзакций</div><div class="v" style="font-size:14px;">LOW</div><span class="badge badge-LOW">LOW</span></div>
+          <div class="bd-stat"><div class="l">PD (12 мес.)</div><div class="v">98.4%</div></div>
+        </div>
+        <div class="mini-title">КЛЮЧЕВЫЕ ФАКТЫ</div>
+        <div class="bd-cols" style="margin-top:8px;">
+          <div>
+            <div class="fact">🔴 Выручка снизилась на 19%</div>
+            <div class="fact">🟠 Чистая прибыль снизилась на 32%</div>
+          </div>
+          <div>
+            <div class="fact">🟠 Увеличилась долговая нагрузка</div>
+            <div class="fact">🟢 Денежные средства сохраняют положительную динамику</div>
+          </div>
+        </div>
+        <div class="mini-title">ОСНОВНЫЕ РИСКИ</div>
+        <div class="bd-cols" style="margin-top:8px;margin-bottom:16px;">
+          <div class="fact">Высокая долговая нагрузка — Debt / EBITDA = 2.8</div>
+          <div class="fact">Снижение рентабельности — Profit margin = 4.7%</div>
+        </div>
+        <div class="credit-card">
+          <div>
+            <div class="title">Кредитное решение</div>
+            <div class="lim">Запрошенный лимит<b>50 000 000 ₸</b></div>
+          </div>
+          <div>
+            <div class="lim">Рекомендуемый лимит<b>40 000 000 ₸</b></div>
+          </div>
+          <div style="text-align:right;">
+            <div class="credit-delta">−20%</div>
+            <div class="note">На основании текущего уровня риска система рекомендует снизить лимит.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+const MOCK_MODE = false;
+const API_URL = '/upload/excel';   // если фронт открыт с другого адреса: 'http://127.0.0.1:8000/upload/excel'
+
+const MOCK_RESPONSE = {
+  companies: ["Тестовая компания"],
+  financial_risk: "MEDIUM",
+  transaction_anomaly_risk: "LOW",
+  overall_risk_score: 55.0,
+  risk_level: "MEDIUM",
+  pd_12m_percent: 98.4,
+  requested_credit_limit: 50000000,
+  recommended_credit_limit: 40000000,
+  monitoring_level: "ENHANCED",
+  top_risk_factors: ["Снижение выручки на 19%","Высокая долговая нагрузка","Снижение рентабельности"],
+  recommended_actions: ["усиленный анализ аналитиком","запросить обновлённую отчётность","мониторинг раз в квартал"]
+};
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const fileInfo = document.getElementById('fileInfo');
+const fname = document.getElementById('fname');
+const fsize = document.getElementById('fsize');
+const analyzeBtn = document.getElementById('analyzeBtn');
+const loading = document.getElementById('loading');
+const loadSteps = document.querySelectorAll('#loadSteps li');
+const resultPanel = document.getElementById('resultPanel');
+const errorBox = document.getElementById('errorBox');
+let currentFile = null;
+let busy = false;
+
+function showError(msg){ errorBox.textContent = msg; errorBox.style.display = 'block'; }
+function hideError(){ errorBox.style.display = 'none'; errorBox.textContent = ''; }
+
+dropzone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', e => e.target.files[0] && selectFile(e.target.files[0]));
+['dragover','dragleave','drop'].forEach(evt => dropzone.addEventListener(evt, e => {
+  e.preventDefault();
+  dropzone.classList.toggle('drag', evt === 'dragover');
+  if (evt === 'drop') { const f = e.dataTransfer.files[0]; if (f) selectFile(f); }
+}));
+
+function selectFile(file){
+  hideError();
+  resultPanel.classList.remove('show');
+  loading.classList.remove('show');
+
+  if (!file.name.toLowerCase().endsWith('.xlsx')){
+    currentFile = null;
+    fileInfo.classList.remove('show');
+    showError('Поддерживается только формат .xlsx');
+    return;
+  }
+  currentFile = file;
+  fname.textContent = file.name;
+  fsize.textContent = (file.size/1024/1024).toFixed(2) + ' МБ';
+  fileInfo.classList.add('show');
+}
+
+analyzeBtn.addEventListener('click', () => currentFile && analyzeFile(currentFile));
+
+// FastAPI отдаёт detail строкой, объектом или списком — приводим к тексту
+function formatError(d){
+  if (!d) return '';
+  if (typeof d === 'string') return d;
+  if (Array.isArray(d)) return d.map(x => x.msg || JSON.stringify(x)).join('; ');
+  if (d.missing_columns) return d.message + '. Не хватает колонок: ' + d.missing_columns.join(', ');
+  if (d.message) return d.message;
+  return JSON.stringify(d);
+}
+
+function analyzeFile(file){
+  if (busy) return;
+  busy = true;
+  hideError();
+  loading.classList.add('show');
+  resultPanel.classList.remove('show');
+
+  let i = 0;
+  loadSteps.forEach(li => li.classList.remove('active'));
+  const stepTimer = setInterval(() => {
+    loadSteps.forEach(li => li.classList.remove('active'));
+    if (loadSteps[i]) loadSteps[i].classList.add('active');
+    i = Math.min(i + 1, loadSteps.length - 1);
+  }, 700);
+
+  const stop = () => { clearInterval(stepTimer); loading.classList.remove('show'); busy = false; };
+
+  if (MOCK_MODE){
+    setTimeout(() => { stop(); renderResult(MOCK_RESPONSE); }, 2200);
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  fetch(API_URL, { method: 'POST', body: formData })
+    .then(async res => {
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(formatError(body.detail) || ('Ошибка сервера (' + res.status + ')'));
+      return body;
+    })
+    .then(body => {
+      // ответ бэкенда: { filename, records_count, ml_result: {...} }
+      const result = body.ml_result || body;
+      if (result.error) throw new Error(result.error);
+      stop();
+      renderResult(result);
+    })
+    .catch(err => {
+      stop();
+      showError(err.message || 'Не удалось проанализировать файл');
+    });
+}
+
+// техническое имя показателя -> понятное название
+const FACTOR_NAMES = {
+  current_ratio:        'Низкая текущая ликвидность',
+  quick_ratio:          'Низкая быстрая ликвидность',
+  cash_ratio:           'Недостаточно денежных средств',
+  debt_growth:          'Быстрый рост долга',
+  debt_to_equity:       'Высокая долговая нагрузка на капитал',
+  debt_to_ebitda:       'Долг велик относительно EBITDA',
+  revenue_growth:       'Снижение выручки',
+  net_margin:           'Низкая рентабельность продаж',
+  profit_margin:        'Низкая рентабельность продаж',
+  ebitda_margin:        'Низкая маржа EBITDA',
+  roe:                  'Низкая рентабельность капитала',
+  roa:                  'Низкая рентабельность активов',
+  equity_ratio:         'Низкая доля собственного капитала',
+  receivables_growth:   'Рост дебиторской задолженности',
+  payables_growth:      'Рост кредиторской задолженности',
+  interest_coverage:    'Слабое покрытие процентов'
+};
+
+// "current_ratio=100" -> { text: 'Низкая текущая ликвидность', level: 'высокий' }
+function prettifyFactor(raw){
+  const m = String(raw).match(/^\s*([a-z0-9_]+)\s*=\s*(-?[\d.]+)\s*$/i);
+  if (!m) return { text: raw };
+  const key = m[1].toLowerCase();
+  const score = parseFloat(m[2]);
+  const level = score >= 70 ? 'высокий' : score >= 40 ? 'средний' : 'низкий';
+  return { text: FACTOR_NAMES[key] || key.replace(/_/g, ' '), level };
+}
+
+function money(n){ return n == null ? '—' : Number(n).toLocaleString('ru-RU') + ' ₸'; }
+const RISK_RU = {LOW:'низкий', MEDIUM:'средний', HIGH:'высокий'};
+
+function renderResult(data){
+  const company = data.company_name || (data.companies || []).join(', ') || '—';
+  document.getElementById('resCompany').textContent = company;
+  document.getElementById('resScore').textContent = data.overall_risk_score ?? '—';
+
+  const badge = document.getElementById('resBadge');
+  const lvl = (data.risk_level || '').toUpperCase();
+  badge.textContent = RISK_RU[lvl] || lvl || '—';
+  badge.className = 'badge badge-' + lvl;
+
+  document.getElementById('resFin').textContent = RISK_RU[(data.financial_risk||'').toUpperCase()] || data.financial_risk || '—';
+  document.getElementById('resTx').textContent = RISK_RU[(data.transaction_anomaly_risk||'').toUpperCase()] || data.transaction_anomaly_risk || '—';
+  document.getElementById('resReq').textContent = money(data.requested_credit_limit);
+  document.getElementById('resRec').textContent = money(data.recommended_credit_limit);
+
+  const factors = document.getElementById('resFactors');
+  factors.innerHTML = '';
+  (data.top_risk_factors || []).forEach(f => {
+    const p = prettifyFactor(f);
+    const d = document.createElement('div');
+    d.textContent = '• ' + p.text + (p.level ? ' — риск ' + p.level : '');
+    factors.appendChild(d);
+  });
+
+  const actions = document.getElementById('resActions');
+  actions.innerHTML = '';
+  (data.recommended_actions || []).forEach(a => {
+    const d = document.createElement('div'); d.textContent = '✓ ' + a; actions.appendChild(d);
+  });
+
+  resultPanel.classList.add('show');
+}
+</script>
+</body>
+</html>
