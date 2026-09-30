@@ -1,0 +1,283 @@
+[
+  {
+    "company_id": 7,
+    "mode": "BASIC",
+    "financial_risk": "MEDIUM",
+    "transaction_anomaly_risk": "HIGH",
+    "forecast_risk": "HIGH",
+    "overall_risk_score": 71.7,
+    "risk_level": "HIGH",
+    "pd_12m_pct": 99.5,
+    "requested_credit_limit": 60000,
+    "recommended_credit_limit": 6000.0,
+    "max_acceptable_exposure": 7000.0,
+    "monitoring_level": "INTENSIVE",
+    "forecast_trend": {
+      "3m": 66.3,
+      "6m": 70.6,
+      "12m": 79.2
+    },
+    "top_risk_factors": [
+      "debt_to_ebitda=100",
+      "current_ratio=79",
+      "profit_margin=71",
+      "сумма транзакции в 8.1x выше исторического среднего",
+      "сумма транзакции в 4.8x выше исторического среднего",
+      "сумма транзакции в 5.1x выше исторического среднего"
+    ],
+    "recommended_actions": [
+      "интенсивный мониторинг",
+      "запросить обновлённую отчётность",
+      "пересмотр кредитного лимита",
+      "дополнительная проверка контрагентов",
+      "ручной анализ риск-офицером"
+    ],
+    "name": "LLP HighRisk-1"
+  },
+  {
+    "company_id": 8,
+    "mode": "BASIC",
+    "financial_risk": "MEDIUM",
+    "transaction_anomaly_risk": "MEDIUM",
+    "forecast_risk": "HIGH",
+    "overall_risk_score": 70.2,
+    "risk_level": "HIGH",
+    "pd_12m_pct": 99.7,
+    "requested_credit_limit": 60000,
+    "recommended_credit_limit": 6000.0,
+    "max_acceptable_exposure": 7000.0,
+    "monitoring_level": "INTENSIVE",
+    "forecast_trend": {
+      "3m": 64.1,
+      "6m": 68.3,
+      "12m": 76.7
+    },
+    "top_risk_factors": [
+      "debt_to_ebitda=100",
+      "current_ratio=79",
+      "profit_margin=72",
+      "сумма транзакции в 7.8x выше исторического среднего",
+      "нетипичное время транзакции",
+      "сумма транзакции в 4.0x выше исторического среднего"
+    ],
+    "recommended_actions": [
+      "интенсивный мониторинг",
+      "запросить обновлённую отчётность",
+      "пересмотр кредитного лимита",
+      "дополнительная проверка контрагентов",
+      "ручной анализ риск-офицером"
+    ],
+    "name": "LLP HighRisk-2"
+  },
+  {
+    "company_id": 4,
+    "mode": "BASIC",
+    "financial_risk": "LOW",
+    "transaction_anomaly_risk": "HIGH",
+    "forecast_risk": "LOW",
+    "overall_risk_score": 39.4,
+    "risk_level": "LOW",
+    "pd_12m_pct": 0.7,
+    "requested_credit_limit": 60000,
+    "recommended_credit_limit": 36000.0,
+    "max_acceptable_exposure": 42000.0,
+    "monitoring_level": "STANDARD",
+    "forecast_trend": {
+      "3m": 23.9,
+      "6m": 23.2,
+      "12m": 21.8
+    },
+    "top_risk_factors": [
+      "receivables_growth=83",
+      "сумма транзакции в 7.7x выше исторического среднего",
+      "сумма транзакции в 6.8x выше исторического среднего",
+      "сумма транзакции в 7.4x выше исторического среднего"
+    ],
+    "recommended_actions": [
+      "стандартный мониторинг",
+      "плановая переоценка через 12 мес."
+    ],
+    "name": "LLP Stable-4"
+  },
+  {
+    "company_id": 2,
+    "mode": "BASIC",
+    "financial_risk": "LOW",
+    "transaction_anomaly_risk": "HIGH",
+    "forecast_risk": "LOW",
+    "overall_risk_score": 30.6,
+    "risk_level": "LOW",
+    "pd_12m_pct": 0.0,
+    "requested_credit_limit": 60000,
+    "recommended_credit_limit": 42000.0,
+    "max_acceptable_exposure": 48000.0,
+    "monitoring_level": "STANDARD",
+    "forecast_trend": {
+      "3m": 22.3,
+      "6m": 21.5,
+      "12m": 20.0
+    },
+    "top_risk_factors": [
+      "нетипичное время транзакции",
+      "сумма транзакции в 5.7x выше исторического среднего",
+      "сумма транзакции в 5.5x выше исторического среднего"
+    ],
+    "recommended_actions": [
+      "стандартный мониторинг",
+      "плановая переоценка через 12 мес."
+    ],
+    "name": "LLP Stable-2"
+  },
+  {
+    "company_id": 6,
+    "mode": "BASIC",
+    "financial_risk": "LOW",
+    "transaction_anomaly_risk": "HIGH",
+    "forecast_risk": "LOW",
+    "overall_risk_score": 37.3,
+    "risk_level": "LOW",
+    "pd_12m_pct": 0.1,
+    "requested_credit_limit": 60000,
+    "recommended_credit_limit": 38000.0,
+    "max_acceptable_exposure": 43000.0,
+    "monitoring_level": "STANDARD",
+    "forecast_trend": {
+      "3m": 25.6,
+      "6m": 25.1,
+      "12m": 24.0
+    },
+    "top_risk_factors": [
+      "сумма транзакции в 7.5x выше исторического среднего",
+      "сумма транзакции в 7.2x выше исторического среднего",
+      "сумма транзакции в 4.3x выше исторического среднего"
+    ],
+    "recommended_actions": [
+      "стандартный мониторинг",
+      "плановая переоценка через 12 мес."
+    ],
+    "name": "LLP Stable-6"
+  },
+  {
+    "company_id": 3,
+    "mode": "BASIC",
+    "financial_risk": "LOW",
+    "transaction_anomaly_risk": "MEDIUM",
+    "forecast_risk": "LOW",
+    "overall_risk_score": 26.5,
+    "risk_level": "LOW",
+    "pd_12m_pct": 0.0,
+    "requested_credit_limit": 60000,
+    "recommended_credit_limit": 44000.0,
+    "max_acceptable_exposure": 51000.0,
+    "monitoring_level": "STANDARD",
+    "forecast_trend": {
+      "3m": 20.8,
+      "6m": 19.5,
+      "12m": 16.9
+    },
+    "top_risk_factors": [
+      "сумма транзакции в 4.3x выше исторического среднего",
+      "нетипичное время транзакции",
+      "сумма транзакции в 7.5x выше исторического среднего"
+    ],
+    "recommended_actions": [
+      "стандартный мониторинг",
+      "плановая переоценка через 12 мес."
+    ],
+    "name": "LLP Stable-3"
+  },
+  {
+    "company_id": 5,
+    "mode": "BASIC",
+    "financial_risk": "LOW",
+    "transaction_anomaly_risk": "HIGH",
+    "forecast_risk": "LOW",
+    "overall_risk_score": 35.9,
+    "risk_level": "LOW",
+    "pd_12m_pct": 0.0,
+    "requested_credit_limit": 60000,
+    "recommended_credit_limit": 38000.0,
+    "max_acceptable_exposure": 44000.0,
+    "monitoring_level": "STANDARD",
+    "forecast_trend": {
+      "3m": 24.6,
+      "6m": 24.1,
+      "12m": 23.1
+    },
+    "top_risk_factors": [
+      "current_ratio=51",
+      "сумма транзакции в 8.1x выше исторического среднего",
+      "нетипичное время транзакции",
+      "сумма транзакции в 7.4x выше исторического среднего"
+    ],
+    "recommended_actions": [
+      "стандартный мониторинг",
+      "плановая переоценка через 12 мес."
+    ],
+    "name": "LLP Stable-5"
+  },
+  {
+    "company_id": 1,
+    "mode": "BASIC",
+    "financial_risk": "LOW",
+    "transaction_anomaly_risk": "HIGH",
+    "forecast_risk": "LOW",
+    "overall_risk_score": 37.7,
+    "risk_level": "LOW",
+    "pd_12m_pct": 0.2,
+    "requested_credit_limit": 60000,
+    "recommended_credit_limit": 37000.0,
+    "max_acceptable_exposure": 43000.0,
+    "monitoring_level": "STANDARD",
+    "forecast_trend": {
+      "3m": 24.2,
+      "6m": 23.2,
+      "12m": 21.3
+    },
+    "top_risk_factors": [
+      "сумма транзакции в 5.9x выше исторического среднего",
+      "сумма транзакции в 4.3x выше исторического среднего",
+      "сумма транзакции в 5.1x выше исторического среднего"
+    ],
+    "recommended_actions": [
+      "стандартный мониторинг",
+      "плановая переоценка через 12 мес."
+    ],
+    "name": "LLP Stable-1"
+  },
+  {
+    "company_id": 9,
+    "mode": "BASIC",
+    "financial_risk": "MEDIUM",
+    "transaction_anomaly_risk": "HIGH",
+    "forecast_risk": "HIGH",
+    "overall_risk_score": 71.9,
+    "risk_level": "HIGH",
+    "pd_12m_pct": 99.7,
+    "requested_credit_limit": 60000,
+    "recommended_credit_limit": 6000.0,
+    "max_acceptable_exposure": 7000.0,
+    "monitoring_level": "INTENSIVE",
+    "forecast_trend": {
+      "3m": 66.1,
+      "6m": 70.2,
+      "12m": 78.4
+    },
+    "top_risk_factors": [
+      "debt_to_ebitda=100",
+      "current_ratio=79",
+      "profit_margin=72",
+      "сумма транзакции в 8.1x выше исторического среднего",
+      "нетипичное время транзакции",
+      "сумма транзакции в 7.5x выше исторического среднего"
+    ],
+    "recommended_actions": [
+      "интенсивный мониторинг",
+      "запросить обновлённую отчётность",
+      "пересмотр кредитного лимита",
+      "дополнительная проверка контрагентов",
+      "ручной анализ риск-офицером"
+    ],
+    "name": "LLP HighRisk-3"
+  }
+]

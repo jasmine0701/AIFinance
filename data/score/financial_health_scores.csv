@@ -1,0 +1,10 @@
+company_id,period,financial_score,top_factors_financial,risk_level
+7,2025-12-31,66.0,"['debt_to_ebitda=100', 'current_ratio=79', 'profit_margin=71']",MEDIUM
+8,2025-12-31,67.4,"['debt_to_ebitda=100', 'current_ratio=79', 'profit_margin=72']",MEDIUM
+4,2025-12-31,36.3,['receivables_growth=83'],LOW
+2,2025-12-31,18.9,[],LOW
+6,2025-12-31,31.2,[],LOW
+3,2025-12-31,17.3,[],LOW
+5,2025-12-31,25.3,['current_ratio=51'],LOW
+1,2025-12-31,32.9,[],LOW
+9,2025-12-31,66.9,"['debt_to_ebitda=100', 'current_ratio=79', 'profit_margin=72']",MEDIUM

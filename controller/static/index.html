@@ -2,522 +2,603 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Finguard — AI-аналитика рисков для банков</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinGuard — AI-аналитика рисков для банков</title>
 <style>
-:root{
-  --navy:#0C1E3E; --blue:#2F6FED; --blue-dark:#1F4FC4; --blue-soft:#EAF1FE;
-  --bg:#FFFFFF; --bg-soft:#F6F9FD; --text:#16213A; --muted:#66748F; --line:#E6ECF5;
-  --green:#16A34A; --green-bg:#E9F8EE;
-  --orange:#E08A1E; --orange-bg:#FDF3E2;
-  --red:#E14B4B; --red-bg:#FCEBEB;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.5;}
-a{text-decoration:none;color:inherit;}
-img,svg{display:block;}
-.wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
-.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--blue);text-transform:uppercase;}
-.muted{color:var(--muted);}
-.card{background:var(--bg);border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px -16px rgba(12,30,62,.15);}
-.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14.5px;border-radius:10px;cursor:pointer;border:none;}
-.btn-primary{background:var(--blue);color:#fff;padding:13px 22px;}
-.btn-primary:hover{background:var(--blue-dark);}
-.btn-ghost{background:transparent;color:var(--navy);padding:13px 4px;}
-.badge{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.02em;}
-.badge-LOW{background:var(--green-bg);color:var(--green);}
-.badge-MEDIUM{background:var(--orange-bg);color:var(--orange);}
-.badge-HIGH{background:var(--red-bg);color:var(--red);}
-.icon-circle{width:38px;height:38px;border-radius:10px;background:var(--blue-soft);display:flex;align-items:center;justify-content:center;flex:none;}
-
-/* header */
-.site-header{border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:20;}
-.site-header .wrap{display:flex;align-items:center;justify-content:space-between;height:76px;}
-.brand{display:flex;align-items:center;gap:10px;}
-.brand-text b{font-size:19px;color:var(--navy);}
-.brand-sub{font-size:10.5px;font-weight:700;letter-spacing:.07em;color:var(--muted);}
-nav{display:flex;gap:32px;font-size:14.5px;color:var(--navy);}
-nav a:hover{color:var(--blue);}
-.header-right{display:flex;align-items:center;gap:28px;}
-@media(max-width:900px){nav{display:none;}}
-
-/* hero */
-.hero{background:linear-gradient(180deg,#F8FBFF 0%,#fff 55%);padding:64px 0 80px;}
-.hero-inner{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:start;}
-@media(max-width:980px){.hero-inner{grid-template-columns:1fr;}}
-.hero h1{font-size:44px;line-height:1.18;font-weight:800;color:var(--navy);margin:16px 0 18px;}
-.hero h1 span{color:var(--blue);}
-.hero p.lead{font-size:16px;color:var(--muted);max-width:52ch;margin-bottom:26px;}
-.perks{display:flex;gap:14px;margin-bottom:30px;flex-wrap:wrap;}
-.perk{display:flex;align-items:center;gap:9px;background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:12.5px;color:var(--navy);font-weight:600;max-width:220px;}
-.perk svg{flex:none;}
-
-/* upload card */
-.upload-card{padding:26px;margin-top:6px;}
-.upload-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:2px;}
-.upload-sub{font-size:13px;color:var(--muted);margin-bottom:16px;}
-.dropzone{border:1.5px dashed #C4D3EE;border-radius:14px;background:var(--bg-soft);padding:34px 20px;text-align:center;cursor:pointer;transition:.15s;}
-.dropzone.drag,.dropzone:hover{border-color:var(--blue);background:var(--blue-soft);}
-.dropzone input{display:none;}
-.dz-formats{font-size:12px;color:var(--muted);margin:10px 0 16px;}
-.file-info{display:none;align-items:center;justify-content:space-between;background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-top:14px;}
-.file-info.show{display:flex;}
-.file-info .fname{font-size:13.5px;font-weight:600;}
-.file-info .fsize{font-size:12px;color:var(--muted);}
-.analyze-row{margin-top:14px;display:none;}
-.analyze-row.show{display:block;}
-.loading{display:none;margin-top:16px;}
-.loading.show{display:block;}
-.loading .headline{font-size:13.5px;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.spinner{width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.load-steps{list-style:none;font-size:12.5px;color:var(--muted);}
-.load-steps li{padding:4px 0;opacity:.4;transition:.2s;}
-.load-steps li.active{opacity:1;color:var(--navy);font-weight:600;}
-
-/* dynamic result */
-.result-panel{display:none;margin-top:18px;padding:22px;}
-.result-panel.show{display:block;}
-.res-head{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:14px;}
-.res-company{font-size:15.5px;font-weight:700;color:var(--navy);}
-.res-score{display:flex;align-items:baseline;gap:6px;}
-.res-score b{font-size:26px;color:var(--navy);}
-.metrics-mini{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
-.metrics-mini div{background:var(--bg-soft);border-radius:10px;padding:10px 12px;}
-.metrics-mini .l{font-size:11px;color:var(--muted);}
-.metrics-mini .v{font-size:14px;font-weight:700;}
-.res-list{font-size:12.5px;margin-top:4px;}
-.res-list div{padding:4px 0;display:flex;gap:8px;align-items:flex-start;}
-
-/* hero right dashboard mock */
-.dash{padding:18px;}
-.dash-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line);}
-.dash-brand{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--navy);}
-.dash-status{font-size:11px;color:var(--green);font-weight:700;display:flex;align-items:center;gap:5px;}
-.dash-company{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
-.dash-company .name{font-size:15px;font-weight:700;color:var(--navy);}
-.dash-company .date{font-size:11px;color:var(--muted);}
-.dash-score{text-align:right;}
-.dash-score .num{font-size:20px;font-weight:800;color:var(--navy);}
-.grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
-.stat-box{background:var(--bg-soft);border-radius:10px;padding:10px 12px;}
-.stat-box .l{font-size:11px;color:var(--muted);}
-.stat-box .v{font-size:16px;font-weight:700;}
-.stat-box .d{font-size:11px;font-weight:700;}
-.d-down{color:var(--red);} .d-up{color:var(--green);}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.mini-title{font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:6px;}
-.mini-list{font-size:12px;display:flex;flex-direction:column;gap:6px;}
-.mini-list div{display:flex;gap:6px;align-items:flex-start;}
-
-/* steps */
-.steps{padding:80px 0;}
-.steps h2{font-size:30px;font-weight:800;color:var(--navy);}
-.steps .sub{color:var(--muted);margin-top:8px;margin-bottom:40px;}
-.steps-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;align-items:start;position:relative;}
-@media(max-width:900px){.steps-row{grid-template-columns:1fr;gap:28px;}}
-.step{padding:0 16px;position:relative;}
-.step-num{font-size:12px;font-weight:800;color:var(--blue);margin-bottom:10px;}
-.step .icon-circle{margin-bottom:14px;background:var(--navy);}
-.step h3{font-size:15.5px;font-weight:700;margin-bottom:6px;}
-.step p{font-size:13px;color:var(--muted);}
-.arrow{position:absolute;top:19px;right:-10px;color:#C7D4EA;}
-@media(max-width:900px){.arrow{display:none;}}
-
-/* cycle section */
-.cycle{background:var(--bg-soft);padding:80px 0;}
-.cycle h2{font-size:32px;font-weight:800;color:var(--navy);margin:14px 0 12px;}
-.cycle .sub{color:var(--muted);max-width:60ch;margin-bottom:40px;}
-.cycle-inner{display:grid;grid-template-columns:.85fr 1.3fr;gap:48px;align-items:start;}
-@media(max-width:980px){.cycle-inner{grid-template-columns:1fr;}}
-.check-list{display:flex;flex-direction:column;gap:14px;margin-top:20px;}
-.check-list div{display:flex;gap:12px;align-items:center;font-size:14.5px;font-weight:600;color:var(--navy);}
-.check-ico{width:22px;height:22px;border-radius:6px;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;flex:none;}
-
-.big-dash{padding:20px;}
-.bd-top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px;}
-.bd-company{font-size:15px;font-weight:700;color:var(--navy);}
-.bd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
-@media(max-width:700px){.bd-grid{grid-template-columns:repeat(2,1fr);}}
-.bd-stat{background:var(--bg-soft);border-radius:12px;padding:12px;}
-.bd-stat .l{font-size:11px;color:var(--muted);margin-bottom:4px;}
-.bd-stat .v{font-size:17px;font-weight:800;color:var(--navy);}
-.bd-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
-@media(max-width:700px){.bd-cols{grid-template-columns:1fr;}}
-.fact{display:flex;gap:8px;font-size:13px;padding:6px 0;align-items:flex-start;}
-.credit-card{background:var(--navy);color:#fff;border-radius:14px;padding:18px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
-.credit-card .title{font-size:13px;font-weight:700;margin-bottom:12px;color:#AFC3EE;}
-.credit-card .lim{font-size:12px;color:#AFC3EE;}
-.credit-card .lim b{display:block;font-size:19px;color:#fff;font-weight:800;margin-top:2px;}
-.credit-card .note{font-size:12px;color:#C8D6F2;max-width:34ch;}
-.credit-delta{font-size:20px;font-weight:800;color:#FF9B7A;}
+:root{--navy:#0C1E3E;--blue:#2F6FED;--blue-dark:#1F4FC4;--blue-soft:#EAF1FE;--bg:#fff;--bg-soft:#F6F9FD;--text:#16213A;--muted:#66748F;--line:#E6ECF5;--green:#16A34A;--green-bg:#E9F8EE;--orange:#E08A1E;--orange-bg:#FDF3E2;--red:#E14B4B;--red-bg:#FCEBEB}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;color:var(--text);background:var(--bg)}
+button,input{font:inherit}
+.container{width:min(1180px,calc(100% - 40px));margin:auto}
+header{border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:50}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;color:var(--navy)}
+.logo-mark{width:34px;height:34px;border-radius:10px;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900}
+.nav-links{display:flex;gap:28px}
+.nav-links a{text-decoration:none;color:var(--muted);font-size:14px;font-weight:600}
+.nav-links a:hover{color:var(--blue)}
+.hero{padding:78px 0 60px;background:radial-gradient(circle at 80% 20%,#edf4ff 0,transparent 32%),linear-gradient(180deg,#fff,#f8fbff)}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center}
+.eyebrow{display:inline-flex;padding:7px 12px;background:var(--blue-soft);color:var(--blue-dark);border-radius:999px;font-size:13px;font-weight:700;margin-bottom:18px}
+.hero h1{font-size:52px;line-height:1.05;letter-spacing:-1.8px;margin:0 0 22px;color:var(--navy)}
+.hero h1 span{color:var(--blue)}
+.hero p{color:var(--muted);font-size:18px;line-height:1.65;max-width:620px;margin:0 0 28px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+.btn{border:0;cursor:pointer;border-radius:10px;padding:13px 20px;font-weight:700;transition:.2s;text-decoration:none}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-dark);transform:translateY(-1px)}
+.btn-secondary{background:#fff;border:1px solid var(--line);color:var(--text)}
+.dashboard{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 20px 50px rgba(23,53,100,.1);overflow:hidden}
+.dashboard-top{height:52px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 18px;gap:7px}
+.dot{width:9px;height:9px;border-radius:50%;background:#d7deea}
+.dashboard-body{padding:22px}
+.dashboard-title{font-size:14px;font-weight:800;margin-bottom:18px}
+.dashboard-score{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.score-number{font-size:46px;font-weight:800;color:var(--navy)}
+.badge{display:inline-block;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
+.badge-low{background:var(--green-bg);color:var(--green)}
+.badge-medium{background:var(--orange-bg);color:var(--orange)}
+.badge-high{background:var(--red-bg);color:var(--red)}
+.mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.mini-card{border:1px solid var(--line);border-radius:12px;padding:13px}
+.mini-label{color:var(--muted);font-size:11px;margin-bottom:5px}
+.mini-value{font-weight:800;font-size:15px}
+section{padding:75px 0}
+.section-head{text-align:center;max-width:720px;margin:0 auto 40px}
+.section-head h2{margin:0 0 12px;color:var(--navy);font-size:36px;letter-spacing:-.7px}
+.section-head p{margin:0;color:var(--muted);line-height:1.6}
+.upload-section{background:var(--bg-soft)}
+.upload-card{max-width:850px;margin:auto;background:#fff;border:1px solid var(--line);border-radius:20px;padding:30px;box-shadow:0 12px 40px rgba(20,45,90,.06)}
+.upload-title{font-size:22px;font-weight:800;margin-bottom:8px}
+.upload-subtitle{color:var(--muted);line-height:1.5;margin-bottom:22px}
+.upload-zone{border:2px dashed #cbd6e7;border-radius:16px;padding:36px 25px;text-align:center;transition:.2s;background:#fbfdff}
+.upload-zone.dragover{border-color:var(--blue);background:var(--blue-soft)}
+.upload-icon{width:52px;height:52px;border-radius:14px;background:var(--blue-soft);color:var(--blue);margin:0 auto 15px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.upload-zone strong{display:block;font-size:16px;margin-bottom:7px}
+.upload-zone small{color:var(--muted)}
+.file-button{display:inline-block;margin-top:18px;padding:11px 17px;border-radius:9px;background:var(--blue);color:#fff;font-weight:700;cursor:pointer}
+#fileInput{display:none}
+.file-info{display:none;margin-top:18px;padding:15px;border-radius:12px;background:#f7f9fc;border:1px solid var(--line)}
+.file-info.active{display:block}
+.file-name{font-weight:800;margin-bottom:5px;word-break:break-all}
+.file-size{color:var(--muted);font-size:13px}
+.endpoint-info{margin-top:12px;font-size:13px;font-weight:700}
+.endpoint-csv{color:var(--blue)}
+.endpoint-excel{color:#7c3aed}
+.limit-box{display:none;margin-top:18px}
+.limit-box.active{display:block}
+.limit-box label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
+.limit-input-wrap{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.limit-input-wrap input{width:100%;border:0;outline:none;padding:12px 14px}
+.limit-currency{padding-right:14px;font-weight:800;color:var(--muted)}
+.analyze-btn{width:100%;margin-top:18px;padding:14px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-weight:800;cursor:pointer}
+.analyze-btn:hover{background:var(--blue-dark)}
+.analyze-btn:disabled{opacity:.55;cursor:not-allowed}
+.loading{display:none;margin-top:22px;padding:18px;background:#f7f9fc;border-radius:12px}
+.loading.active{display:block}
+.loading-title{font-weight:800;margin-bottom:12px}
+.loading-step{color:var(--muted);font-size:13px;margin:7px 0;opacity:.6}
+.loading-step.active{color:var(--blue);font-weight:700;opacity:1}
+.loading-step.done{color:var(--green);opacity:1}
+.error-box{display:none;margin-top:18px;padding:16px;border-radius:12px;background:var(--red-bg);color:#9b2424;border:1px solid #f2c2c2;white-space:pre-wrap;line-height:1.5;font-size:13px}
+.error-box.active{display:block}
+.result-section{display:none}
+.result-section.active{display:block}
+.result-wrapper{max-width:1050px;margin:auto}
+.result-header{margin-bottom:22px}
+.result-header h2{margin:0;font-size:28px;color:var(--navy)}
+.result-count{color:var(--muted);font-size:14px;margin-top:4px}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.summary-card{border:1px solid var(--line);border-radius:14px;padding:18px;background:#fff}
+.summary-card .label{font-size:12px;color:var(--muted);margin-bottom:7px}
+.summary-card .value{font-size:24px;font-weight:800;color:var(--navy)}
+.company-result{border:1px solid var(--line);border-radius:18px;background:#fff;padding:24px;margin-bottom:18px;box-shadow:0 8px 30px rgba(20,45,90,.05)}
+.company-result.error{border-color:#f0b5b5;background:#fffafa}
+.company-top{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:22px}
+.company-name{font-size:22px;font-weight:800;color:var(--navy)}
+.company-sub{color:var(--muted);font-size:12px;margin-top:5px}
+.company-score{display:flex;align-items:center;gap:14px}
+.score{font-size:38px;font-weight:900;color:var(--navy)}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.metric{padding:15px;border-radius:12px;background:#f8fafd;border:1px solid var(--line)}
+.metric-label{color:var(--muted);font-size:12px;margin-bottom:6px}
+.metric-value{font-weight:800;font-size:15px}
+.result-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.result-box{border:1px solid var(--line);border-radius:12px;padding:17px}
+.result-box h4{margin:0 0 12px;font-size:14px}
+.result-box ul{padding-left:19px;margin:0}
+.result-box li{margin:7px 0;color:var(--muted);font-size:13px}
+.empty{color:var(--muted);font-size:13px}
+.cross-check{margin-top:18px;border:1px solid var(--line);border-radius:12px;padding:18px;background:#fbfcff}
+.cross-check h4{margin:0 0 10px}
+.cross-check .hint{font-size:12px;color:var(--muted);margin-bottom:10px}
+.big{font-size:26px;font-weight:900;color:var(--navy)}
+.raw-response{margin-top:18px}
+.raw-response summary{cursor:pointer;color:var(--muted);font-size:13px}
+.raw-response pre{white-space:pre-wrap;overflow:auto;background:#0c1e3e;color:#eaf1fe;padding:15px;border-radius:10px;font-size:12px;line-height:1.5;margin-top:10px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.step{padding:25px;border:1px solid var(--line);border-radius:16px}
+.step-number{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--blue-soft);color:var(--blue);font-weight:900;margin-bottom:15px}
+.step h3{margin:0 0 8px}
+.step p{color:var(--muted);line-height:1.55;margin:0}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13px}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}.hero h1{font-size:42px}.summary-grid,.metrics-grid{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr}}
+@media(max-width:600px){.container{width:calc(100% - 24px)}.nav-links{display:none}.hero{padding-top:50px}.hero h1{font-size:35px}.upload-card{padding:18px}.summary-grid,.metrics-grid,.result-columns{grid-template-columns:1fr}.company-top{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="wrap">
-    <div class="brand">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5v6c0 5 3.4 8.7 8 9.9 4.6-1.2 8-4.9 8-9.9V5l-8-3z" fill="#2F6FED"/><path d="M9 12.3l2 2 4-4.4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <div class="brand-text"><b>Finguard</b><div class="brand-sub">AI-АНАЛИТИКА РИСКОВ ДЛЯ БАНКОВ</div></div>
-    </div>
-    <nav><a href="#how">Как это работает</a><a href="#cycle">Возможности</a><a href="#">Преимущества</a><a href="#">FAQ</a></nav>
-    <div class="header-right"><a href="#" class="btn btn-ghost">Войти</a></div>
+<header>
+  <div class="container nav">
+    <div class="logo"><div class="logo-mark">F</div>FinGuard</div>
+    <nav class="nav-links">
+      <a href="#analysis">Анализ</a>
+      <a href="#how">Как работает</a>
+      <a href="#results">Результаты</a>
+    </nav>
   </div>
 </header>
 
 <section class="hero">
-  <div class="wrap hero-inner">
-    <div class="hero-left">
-      <div class="eyebrow">Банковский риск-продукт</div>
-      <h1>Анализируйте финансовую отчетность<br><span>и оценивайте риски за минуты</span></h1>
-      <p class="lead">Загрузите Excel с финансовой отчетностью компании — Finguard автоматически анализирует ключевые показатели, выявляет финансовые риски и помогает принять обоснованное решение.</p>
-
-      <div class="perks">
-        <div class="perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="#2F6FED"/></svg>Ответ обычно готов меньше чем за минуту</div>
-        <div class="perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5v6c0 5 3.4 8.7 8 9.9 4.6-1.2 8-4.9 8-9.9V5l-8-3z" fill="#2F6FED"/></svg>Файл используется только для анализа</div>
-        <div class="perk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="5" y="11" width="14" height="9" rx="2" fill="#2F6FED"/><path d="M8 11V7a4 4 0 018 0v4" stroke="#2F6FED" stroke-width="1.8"/></svg>Ваши данные в безопасности</div>
-      </div>
-
-      <div class="card upload-card">
-        <div class="upload-title">Загрузите Excel (.xlsx)</div>
-        <div class="upload-sub">Финансовая отчетность компании</div>
-        <div class="dropzone" id="dropzone">
-          <input type="file" id="fileInput" accept=".xlsx">
-          <svg width="30" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 10px"><path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="#2F6FED" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3" stroke="#9DB4DE" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <div style="font-size:14px;font-weight:600;">Перетащите файл сюда</div>
-          <div class="dz-formats">.xlsx</div>
-          <span class="btn btn-primary" id="chooseBtn">Выбрать файл →</span>
-        </div>
-
-        <div class="file-info" id="fileInfo">
-          <div><div class="fname" id="fname"></div><div class="fsize" id="fsize"></div></div>
-          <span class="btn btn-primary" id="analyzeBtn" style="padding:9px 16px;">Анализировать</span>
-        </div>
-
-        <div class="loading" id="loading">
-          <div class="headline"><span class="spinner"></span>Анализируем финансовую отчётность…</div>
-          <ul class="load-steps" id="loadSteps">
-            <li>Распознаём показатели</li>
-            <li>Анализируем финансовое состояние</li>
-            <li>Рассчитываем риски</li>
-            <li>Формируем рекомендации</li>
-          </ul>
-        </div>
-
-        <div id="errorBox" style="display:none;margin-top:14px;padding:12px 14px;border-radius:10px;background:#FEF3F2;color:#B42318;font-size:13px;line-height:1.4;"></div>
-
-        <div class="card result-panel" id="resultPanel" style="border:none;box-shadow:none;background:var(--bg-soft);">
-          <div class="res-head">
-            <div><div class="res-company" id="resCompany">—</div><div class="muted" style="font-size:12px;">Анализ завершён</div></div>
-            <div class="res-score"><b id="resScore">—</b><span class="badge" id="resBadge">—</span></div>
-          </div>
-          <div class="metrics-mini">
-            <div><div class="l">Финансовый риск</div><div class="v" id="resFin">—</div></div>
-            <div><div class="l">Риск транзакций</div><div class="v" id="resTx">—</div></div>
-            <div><div class="l">Запрошенный лимит</div><div class="v" id="resReq">—</div></div>
-            <div><div class="l">Рекомендуемый лимит</div><div class="v" id="resRec">—</div></div>
-          </div>
-          <div class="mini-title">ОСНОВНЫЕ РИСКИ</div>
-          <div class="res-list" id="resFactors"></div>
-          <div class="mini-title" style="margin-top:10px;">РЕКОМЕНДАЦИИ</div>
-          <div class="res-list" id="resActions"></div>
-        </div>
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow">AI · Financial Risk</div>
+      <h1>AI-аналитика <span>финансовых рисков</span> для банков</h1>
+      <p>FinGuard автоматически анализирует финансовую отчётность, выявляет риски и аномалии и рассчитывает рекомендуемый кредитный лимит компании.</p>
+      <div class="hero-actions">
+        <a href="#analysis" class="btn btn-primary">Начать анализ</a>
+        <a href="#how" class="btn btn-secondary">Как это работает</a>
       </div>
     </div>
-
-    <div class="hero-right">
-      <div class="card dash">
-        <div class="dash-top">
-          <div class="dash-brand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 5v6c0 5 3.4 8.7 8 9.9 4.6-1.2 8-4.9 8-9.9V5l-8-3z" fill="#2F6FED"/></svg>Finguard</div>
-          <div class="dash-status">✓ Анализ завершён</div>
+    <div class="dashboard">
+      <div class="dashboard-top"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="dashboard-body">
+        <div class="dashboard-title">FinGuard Risk Dashboard</div>
+        <div class="dashboard-score">
+          <div><div class="score-number">55</div><div style="color:var(--muted);font-size:12px">Overall Risk Score</div></div>
+          <div class="badge badge-medium">MEDIUM</div>
         </div>
-        <div class="dash-company">
-          <div><div class="name">ООО «Альфа Плюс»</div><div class="date">25.04.2025, 14:32</div></div>
-          <div class="dash-score"><div class="num">55.0</div><span class="badge badge-MEDIUM">MEDIUM</span></div>
-        </div>
-        <div class="grid4">
-          <div class="stat-box"><div class="l">Выручка</div><div class="v">−19% <span class="d-down"></span></div></div>
-          <div class="stat-box"><div class="l">Чистая прибыль</div><div class="v">−32%</div></div>
-          <div class="stat-box"><div class="l">Долг / EBITDA</div><div class="v">2.8</div></div>
-          <div class="stat-box"><div class="l">Рентабельность</div><div class="v">4.7%</div></div>
-        </div>
-        <div class="two-col">
-          <div>
-            <div class="mini-title">ОСНОВНЫЕ РИСКИ</div>
-            <div class="mini-list">
-              <div>🔴 Снижение выручки</div>
-              <div>🟠 Высокая долговая нагрузка</div>
-              <div>🟠 Снижение рентабельности</div>
-            </div>
-          </div>
-          <div>
-            <div class="mini-title">РЕКОМЕНДАЦИИ</div>
-            <div class="mini-list">
-              <div>✓ Усиленный анализ аналитиком</div>
-              <div>✓ Запросить обновлённую отчётность</div>
-              <div>✓ Мониторинг раз в квартал</div>
-            </div>
-          </div>
+        <div class="mini-grid">
+          <div class="mini-card"><div class="mini-label">Financial Risk</div><div class="mini-value">MEDIUM</div></div>
+          <div class="mini-card"><div class="mini-label">Transaction Risk</div><div class="mini-value">LOW</div></div>
+          <div class="mini-card"><div class="mini-label">Requested Limit</div><div class="mini-value">60 млн ₸</div></div>
+          <div class="mini-card"><div class="mini-label">Recommended</div><div class="mini-value">40 млн ₸</div></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="steps" id="how">
-  <div class="wrap">
-    <h2>Как это работает</h2>
-    <div class="sub">Всего 4 простых шага — и вы получаете готовый анализ рисков.</div>
-    <div class="steps-row">
-      <div class="step"><div class="step-num">01</div><div class="icon-circle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Загрузите Excel</h3><p>Файл с финансовой отчётностью компании.</p><span class="arrow">›</span></div>
-      <div class="step"><div class="step-num">02</div><div class="icon-circle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="1.8"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Автоматическое распознавание</h3><p>Система извлекает и обрабатывает ключевые финансовые показатели.</p><span class="arrow">›</span></div>
-      <div class="step"><div class="step-num">03</div><div class="icon-circle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 19V9m6 10V5m6 14v-7" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Расчёт риска</h3><p>Анализируем финансовое состояние и рассчитываем итоговый risk score.</p><span class="arrow">›</span></div>
-      <div class="step"><div class="step-num">04</div><div class="icon-circle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 4h9l3 3v13H6z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12h6M9 16h6" stroke="#fff" stroke-width="1.6"/></svg></div><h3>Готовый результат</h3><p>Структурированный анализ, риски, рекомендации и основа для решения.</p></div>
+<section class="upload-section" id="analysis">
+  <div class="container">
+    <div class="section-head">
+      <h2>Анализ финансовой отчётности</h2>
+      <p>Загрузите CSV или Excel-файл. Система автоматически определит нужный ML endpoint.</p>
+    </div>
+    <div class="upload-card">
+      <div class="upload-title">Финансовая отчетность компании</div>
+      <div class="upload-subtitle">CSV отправляется напрямую в Batch ML, а XLSX/XLS проходит через Excel Controller.</div>
+
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-icon">↑</div>
+        <strong>Перетащите файл сюда</strong>
+        <small>.xlsx · .xls · .csv</small><br>
+        <label for="fileInput" class="file-button">Выбрать файл →</label>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+      </div>
+
+      <div class="file-info" id="fileInfo">
+        <div class="file-name" id="fileName"></div>
+        <div class="file-size" id="fileSize"></div>
+        <div class="endpoint-info" id="endpointInfo"></div>
+      </div>
+
+      <!-- Лимит нужен только для CSV (/analyze-batch) -->
+      <div class="limit-box" id="limitBox">
+        <label for="requestedLimit">Запрошенный кредитный лимит (для CSV)</label>
+        <div class="limit-input-wrap">
+          <input type="number" id="requestedLimit" value="60000000" min="1" step="1000000">
+          <div class="limit-currency">₸</div>
+        </div>
+      </div>
+
+      <button class="analyze-btn" id="analyzeBtn" disabled>Анализировать</button>
+
+      <div class="loading" id="loading">
+        <div class="loading-title">Выполняется анализ...</div>
+        <div class="loading-step" id="loading1">Загрузка файла</div>
+        <div class="loading-step" id="loading2">Анализ финансовых показателей</div>
+        <div class="loading-step" id="loading3">Расчёт финансового риска</div>
+        <div class="loading-step" id="loading4">Формирование результата</div>
+      </div>
+
+      <div class="error-box" id="errorBox"></div>
     </div>
   </div>
 </section>
 
-<section class="cycle" id="cycle">
-  <div class="wrap">
-    <div class="eyebrow" style="background:var(--blue-soft);padding:6px 12px;border-radius:20px;display:inline-block;">Пример результата</div>
-    <h2>Полный цикл анализа в одном окне</h2>
-    <div class="sub">От финансовой отчётности до обоснованного решения — без ручного анализа десятков показателей.</div>
-    <div class="cycle-inner">
-      <div>
-        <div class="check-list">
-          <div><span class="check-ico">✓</span>Анализ финансовых показателей</div>
-          <div><span class="check-ico">✓</span>Выявление ключевых изменений</div>
-          <div><span class="check-ico">✓</span>Расчёт финансового риска</div>
-          <div><span class="check-ico">✓</span>Определение факторов риска</div>
-          <div><span class="check-ico">✓</span>Рекомендации по дальнейшим действиям</div>
-          <div><span class="check-ico">✓</span>Кредитное решение</div>
-        </div>
+<section class="result-section" id="results">
+  <div class="container">
+    <div class="result-wrapper">
+      <div class="result-header">
+        <h2>Результаты анализа</h2>
+        <div class="result-count" id="resultCount"></div>
       </div>
-      <div class="card big-dash">
-        <div class="bd-top">
-          <div><div class="bd-company">Результат анализа — ООО «Альфа Плюс»</div><div class="muted" style="font-size:12px;">Финансовый анализ</div></div>
-          <div class="dash-status">✓ Анализ завершён</div>
-        </div>
-        <div class="bd-grid">
-          <div class="bd-stat"><div class="l">Общий риск</div><div class="v">55.0</div><span class="badge badge-MEDIUM">MEDIUM</span></div>
-          <div class="bd-stat"><div class="l">Финансовый риск</div><div class="v" style="font-size:14px;">MEDIUM</div><span class="badge badge-MEDIUM">MEDIUM</span></div>
-          <div class="bd-stat"><div class="l">Риск транзакций</div><div class="v" style="font-size:14px;">LOW</div><span class="badge badge-LOW">LOW</span></div>
-          <div class="bd-stat"><div class="l">PD (12 мес.)</div><div class="v">98.4%</div></div>
-        </div>
-        <div class="mini-title">КЛЮЧЕВЫЕ ФАКТЫ</div>
-        <div class="bd-cols" style="margin-top:8px;">
-          <div>
-            <div class="fact">🔴 Выручка снизилась на 19%</div>
-            <div class="fact">🟠 Чистая прибыль снизилась на 32%</div>
-          </div>
-          <div>
-            <div class="fact">🟠 Увеличилась долговая нагрузка</div>
-            <div class="fact">🟢 Денежные средства сохраняют положительную динамику</div>
-          </div>
-        </div>
-        <div class="mini-title">ОСНОВНЫЕ РИСКИ</div>
-        <div class="bd-cols" style="margin-top:8px;margin-bottom:16px;">
-          <div class="fact">Высокая долговая нагрузка — Debt / EBITDA = 2.8</div>
-          <div class="fact">Снижение рентабельности — Profit margin = 4.7%</div>
-        </div>
-        <div class="credit-card">
-          <div>
-            <div class="title">Кредитное решение</div>
-            <div class="lim">Запрошенный лимит<b>50 000 000 ₸</b></div>
-          </div>
-          <div>
-            <div class="lim">Рекомендуемый лимит<b>40 000 000 ₸</b></div>
-          </div>
-          <div style="text-align:right;">
-            <div class="credit-delta">−20%</div>
-            <div class="note">На основании текущего уровня риска система рекомендует снизить лимит.</div>
-          </div>
-        </div>
-      </div>
+      <div class="summary-grid" id="summaryGrid"></div>
+      <div id="resultsContainer"></div>
     </div>
   </div>
 </section>
+
+<section id="how">
+  <div class="container">
+    <div class="section-head">
+      <h2>Как работает FinGuard</h2>
+      <p>От загрузки отчётности до готового риск-профиля.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-number">1</div><h3>Загрузка</h3><p>Пользователь загружает финансовую отчётность в формате CSV или Excel.</p></div>
+      <div class="step"><div class="step-number">2</div><h3>AI-анализ</h3><p>ML-модели анализируют финансовые показатели, риск и аномалии.</p></div>
+      <div class="step"><div class="step-number">3</div><h3>Решение</h3><p>Система формирует риск-профиль и рекомендуемый кредитный лимит.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="container">FinGuard AI · Financial Risk Analytics</div></footer>
 
 <script>
-const MOCK_MODE = false;
-const API_URL = '/upload/excel';   // если фронт открыт с другого адреса: 'http://127.0.0.1:8000/upload/excel'
+/* ===== API ===== */
+const CSV_API_URL   = "http://127.0.0.1:8003/analyze-batch";   // CSV  -> Batch ML
+const EXCEL_API_URL = "http://127.0.0.1:8000/upload/excel";    // XLSX/XLS -> Excel Controller
 
-const MOCK_RESPONSE = {
-  companies: ["Тестовая компания"],
-  financial_risk: "MEDIUM",
-  transaction_anomaly_risk: "LOW",
-  overall_risk_score: 55.0,
-  risk_level: "MEDIUM",
-  pd_12m_percent: 98.4,
-  requested_credit_limit: 50000000,
-  recommended_credit_limit: 40000000,
-  monitoring_level: "ENHANCED",
-  top_risk_factors: ["Снижение выручки на 19%","Высокая долговая нагрузка","Снижение рентабельности"],
-  recommended_actions: ["усиленный анализ аналитиком","запросить обновлённую отчётность","мониторинг раз в квартал"]
-};
+/* ===== DOM ===== */
+const $ = id => document.getElementById(id);
+const fileInput = $("fileInput"), uploadZone = $("uploadZone"), fileInfo = $("fileInfo"),
+      fileName = $("fileName"), fileSize = $("fileSize"), endpointInfo = $("endpointInfo"),
+      limitBox = $("limitBox"), requestedLimit = $("requestedLimit"), analyzeBtn = $("analyzeBtn"),
+      loading = $("loading"), errorBox = $("errorBox"), resultSection = $("results"),
+      resultsContainer = $("resultsContainer"), summaryGrid = $("summaryGrid"), resultCount = $("resultCount");
 
-const dropzone = document.getElementById('dropzone');
-const fileInput = document.getElementById('fileInput');
-const fileInfo = document.getElementById('fileInfo');
-const fname = document.getElementById('fname');
-const fsize = document.getElementById('fsize');
-const analyzeBtn = document.getElementById('analyzeBtn');
-const loading = document.getElementById('loading');
-const loadSteps = document.querySelectorAll('#loadSteps li');
-const resultPanel = document.getElementById('resultPanel');
-const errorBox = document.getElementById('errorBox');
-let currentFile = null;
+let selectedFile = null;
 let busy = false;
 
-function showError(msg){ errorBox.textContent = msg; errorBox.style.display = 'block'; }
-function hideError(){ errorBox.style.display = 'none'; errorBox.textContent = ''; }
+const extOf = f => f.name.split(".").pop().toLowerCase();
 
-dropzone.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', e => e.target.files[0] && selectFile(e.target.files[0]));
-['dragover','dragleave','drop'].forEach(evt => dropzone.addEventListener(evt, e => {
+/* ===== Выбор файла ===== */
+fileInput.addEventListener("change", function(){
+  if(this.files && this.files.length) setSelectedFile(this.files[0]);
+});
+uploadZone.addEventListener("dragover", e => { e.preventDefault(); uploadZone.classList.add("dragover"); });
+uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("dragover"));
+uploadZone.addEventListener("drop", e => {
   e.preventDefault();
-  dropzone.classList.toggle('drag', evt === 'dragover');
-  if (evt === 'drop') { const f = e.dataTransfer.files[0]; if (f) selectFile(f); }
-}));
+  uploadZone.classList.remove("dragover");
+  if(e.dataTransfer.files.length) setSelectedFile(e.dataTransfer.files[0]);
+});
 
-function selectFile(file){
-  hideError();
-  resultPanel.classList.remove('show');
-  loading.classList.remove('show');
-
-  if (!file.name.toLowerCase().endsWith('.xlsx')){
-    currentFile = null;
-    fileInfo.classList.remove('show');
-    showError('Поддерживается только формат .xlsx');
+function setSelectedFile(file){
+  clearError();
+  const ext = extOf(file);
+  if(!["csv","xlsx","xls"].includes(ext)){
+    selectedFile = null;
+    fileInfo.classList.remove("active");
+    limitBox.classList.remove("active");
+    analyzeBtn.disabled = true;
+    showError("Поддерживаются только файлы CSV, XLSX и XLS.");
     return;
   }
-  currentFile = file;
-  fname.textContent = file.name;
-  fsize.textContent = (file.size/1024/1024).toFixed(2) + ' МБ';
-  fileInfo.classList.add('show');
+  selectedFile = file;
+  fileName.textContent = file.name;
+  fileSize.textContent = formatFileSize(file.size);
+
+  if(ext === "csv"){
+    endpointInfo.textContent = "CSV → /analyze-batch → ML :8003";
+    endpointInfo.className = "endpoint-info endpoint-csv";
+    limitBox.classList.add("active");
+  }else{
+    endpointInfo.textContent = "XLSX/XLS → /upload/excel → Controller :8000";
+    endpointInfo.className = "endpoint-info endpoint-excel";
+    limitBox.classList.remove("active");
+  }
+  fileInfo.classList.add("active");
+  analyzeBtn.disabled = false;
 }
 
-analyzeBtn.addEventListener('click', () => currentFile && analyzeFile(currentFile));
+analyzeBtn.addEventListener("click", () => { if(selectedFile) analyzeFile(selectedFile); });
+
+/* ===== Анализ ===== */
+async function analyzeFile(file){
+  if(busy) return;
+  busy = true;
+  clearError();
+  resultSection.classList.remove("active");
+  resultsContainer.innerHTML = "";
+  summaryGrid.innerHTML = "";
+
+  const isCsv = extOf(file) === "csv";
+  const url = isCsv ? CSV_API_URL : EXCEL_API_URL;
+
+  analyzeBtn.disabled = true;
+  loading.classList.add("active");
+  setLoadingStep(1);
+
+  try{
+    const formData = new FormData();
+    formData.append("file", file);
+
+    if(isCsv){
+      const limit = Number(requestedLimit.value);
+      if(!Number.isFinite(limit) || limit <= 0) throw new Error("Укажите корректный кредитный лимит.");
+      formData.append("requested_limit", String(Math.round(limit)));
+    }
+
+    await sleep(250);
+    setLoadingStep(2);
+    setTimeout(() => { if(busy) setLoadingStep(3); }, 900);
+
+    // Content-Type не указываем — браузер сам добавит multipart boundary
+    let response;
+    try{
+      response = await fetch(url, { method:"POST", body:formData });
+    }catch(netErr){
+      throw new Error("Не удалось связаться с сервером: " + url +
+        "\nПроверьте, что backend запущен и разрешён CORS.");
+    }
+
+    setLoadingStep(4);
+
+    const rawText = await response.text();
+    let data;
+    try{ data = JSON.parse(rawText); }
+    catch(e){ throw new Error("Сервер вернул не JSON (HTTP " + response.status + ").\n\n" + rawText.slice(0,1500)); }
+
+    console.log("HTTP", response.status, url, data);
+
+    if(!response.ok){
+      throw new Error("HTTP " + response.status + "\n" +
+        (formatError(data.detail) || data.error || JSON.stringify(data, null, 2)));
+    }
+
+    // Excel Controller оборачивает ответ: { filename, records_count, ml_result: {...} }
+    const payload = (data && data.ml_result) ? data.ml_result : data;
+    if(payload && payload.error && !Array.isArray(payload.results)) throw new Error(payload.error);
+
+    if(Array.isArray(payload.results)){
+      renderBatchResult(payload);
+    }else{
+      renderSingleResult(payload);
+    }
+    addRawResponse(data);
+
+    resultSection.classList.add("active");
+    resultSection.scrollIntoView({ behavior:"smooth", block:"start" });
+
+  }catch(err){
+    console.error(err);
+    showError(err.message || "Не удалось выполнить анализ.");
+  }finally{
+    busy = false;
+    analyzeBtn.disabled = false;
+    loading.classList.remove("active");
+  }
+}
+
+/* ===== Рендер: несколько компаний ===== */
+function renderBatchResult(data){
+  const list = data.results;
+  const count = Number(data.companies_count || list.length);
+  resultCount.textContent = "Проанализировано компаний: " + count;
+
+  const s = data.summary || {};
+  addSummaryCard("Всего", count);
+  addSummaryCard("Низкий риск", s.LOW || 0);
+  addSummaryCard("Средний риск", s.MEDIUM || 0);
+  addSummaryCard("Высокий риск", s.HIGH || 0);
+
+  list.forEach((c, i) => renderCompanyCard(c, i));
+}
+
+/* ===== Рендер: одна компания ===== */
+function renderSingleResult(data){
+  let c = data;
+  if(data.result && typeof data.result === "object") c = data.result;
+  if(data.analysis && typeof data.analysis === "object") c = data.analysis;
+
+  resultCount.textContent = "Результат анализа одной компании";
+  addSummaryCard("Risk Score", c.overall_risk_score != null ? formatNumber(c.overall_risk_score) : "—");
+  addSummaryCard("Уровень риска", translateRisk(c.risk_level));
+  addSummaryCard("PD 12M", c.pd_12m_percent != null ? formatNumber(c.pd_12m_percent) + "%" : "—");
+  addSummaryCard("Периодов", c.periods_loaded ?? "—");
+
+  renderCompanyCard(c, 0);
+}
+
+/* ===== Карточка компании ===== */
+function renderCompanyCard(c, index){
+  const card = document.createElement("div");
+  card.className = "company-result";
+
+  const name = c.company_name || c.company_id ||
+    (Array.isArray(c.companies) && c.companies.length ? c.companies.join(", ") : "Компания " + (index + 1));
+
+  if(c.error){
+    card.classList.add("error");
+    card.innerHTML =
+      '<div class="company-top"><div class="company-name">' + esc(name) + '</div>' +
+      '<div class="badge badge-high">ОШИБКА</div></div>' +
+      '<div style="color:#9b2424;line-height:1.6">' + esc(c.error) + '</div>';
+    resultsContainer.appendChild(card);
+    return;
+  }
+
+  const level = c.risk_level || "UNKNOWN";
+  const sub = [];
+  if(c.source_type) sub.push(esc(c.source_type));
+  if(c.periods_loaded != null) sub.push("Периодов: " + esc(c.periods_loaded));
+
+  card.innerHTML =
+    '<div class="company-top">' +
+      '<div><div class="company-name">' + esc(name) + '</div>' +
+      '<div class="company-sub">' + sub.join(" · ") + '</div></div>' +
+      '<div class="company-score"><div class="score">' +
+        (c.overall_risk_score != null ? formatNumber(c.overall_risk_score) : "—") + '</div>' +
+      '<div class="badge ' + riskClass(level) + '">' + esc(translateRisk(level)) + '</div></div>' +
+    '</div>' +
+    '<div class="metrics-grid">' +
+      metric("Финансовый риск", translateRisk(c.financial_risk)) +
+      metric("Риск транзакций", translateRisk(c.transaction_anomaly_risk)) +
+      metric("Запрошенный лимит", money(c.requested_credit_limit)) +
+      metric("Рекомендуемый лимит", money(c.recommended_credit_limit)) +
+    '</div>' +
+    '<div class="result-columns">' +
+      '<div class="result-box"><h4>Основные факторы риска</h4>' +
+        renderList((c.top_risk_factors || []).map(prettifyFactor)) + '</div>' +
+      '<div class="result-box"><h4>Рекомендуемые действия</h4>' +
+        renderList(c.recommended_actions) + '</div>' +
+    '</div>';
+
+  if(c.pd_12m_percent != null){
+    addBox(card, "Probability of Default — 12 месяцев",
+      '<div class="big">' + formatNumber(c.pd_12m_percent) + '%</div>');
+  }
+
+  if(c.cross_check){
+    const cc = c.cross_check;
+    const lvl = cc.level || cc.cross_check_level;
+    const findings = cc.top_findings && cc.top_findings.length
+      ? renderList(cc.top_findings)
+      : '<div class="empty">✓ Все проверенные тождества сходятся</div>';
+    addBox(card, "Согласованность отчётности",
+      '<div class="hint">Проверка Баланс ↔ ОПиУ ↔ ОДДС между собой, до расчёта риска</div>' +
+      '<div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:10px">' +
+        '<div><div class="mini-label">Score</div><div class="big" style="font-size:20px">' +
+          (cc.cross_check_risk_score != null ? formatNumber(cc.cross_check_risk_score) : "—") + '</div></div>' +
+        '<div><div class="mini-label">Уровень</div><span class="badge ' + riskClass(lvl) + '">' +
+          esc(translateRisk(lvl)) + '</span></div>' +
+      '</div>' + findings);
+  }
+
+  if(c.note){
+    addBox(card, "Примечание", '<div style="color:var(--muted);line-height:1.6;font-size:13px">' + esc(c.note) + '</div>');
+  }
+
+  resultsContainer.appendChild(card);
+}
+
+function addBox(card, title, html){
+  const b = document.createElement("div");
+  b.className = "cross-check";
+  b.innerHTML = "<h4>" + esc(title) + "</h4>" + html;
+  card.appendChild(b);
+}
+
+function metric(label, value){
+  return '<div class="metric"><div class="metric-label">' + esc(label) +
+         '</div><div class="metric-value">' + esc(value) + '</div></div>';
+}
+
+function addSummaryCard(label, value){
+  const d = document.createElement("div");
+  d.className = "summary-card";
+  d.innerHTML = '<div class="label">' + esc(label) + '</div><div class="value">' + esc(String(value)) + '</div>';
+  summaryGrid.appendChild(d);
+}
+
+function addRawResponse(data){
+  const d = document.createElement("details");
+  d.className = "raw-response";
+  d.innerHTML = "<summary>Показать полный JSON-ответ</summary><pre>" + esc(JSON.stringify(data, null, 2)) + "</pre>";
+  resultsContainer.appendChild(d);
+}
+
+function renderList(items){
+  if(!Array.isArray(items) || !items.length) return '<div class="empty">Нет данных</div>';
+  return "<ul>" + items.map(i => "<li>" + esc(String(i)) + "</li>").join("") + "</ul>";
+}
+
+/* ===== Факторы риска: "current_ratio=100" -> "Низкая текущая ликвидность — риск высокий" ===== */
+const FACTOR_NAMES = {
+  current_ratio:"Низкая текущая ликвидность", quick_ratio:"Низкая быстрая ликвидность",
+  cash_ratio:"Недостаточно денежных средств", debt_growth:"Быстрый рост долга",
+  debt_to_equity:"Высокая долговая нагрузка на капитал", debt_to_ebitda:"Долг велик относительно EBITDA",
+  revenue_growth:"Снижение выручки", net_margin:"Низкая рентабельность продаж",
+  profit_margin:"Низкая рентабельность продаж", ebitda_margin:"Низкая маржа EBITDA",
+  roe:"Низкая рентабельность капитала", roa:"Низкая рентабельность активов",
+  equity_ratio:"Низкая доля собственного капитала", receivables_growth:"Рост дебиторской задолженности",
+  payables_growth:"Рост кредиторской задолженности", interest_coverage:"Слабое покрытие процентов"
+};
+
+function prettifyFactor(raw){
+  const m = String(raw).match(/^\s*([a-z0-9_]+)\s*=\s*(-?[\d.]+)\s*$/i);
+  if(!m) return raw;
+  const score = parseFloat(m[2]);
+  const lvl = score >= 70 ? "высокий" : score >= 40 ? "средний" : "низкий";
+  const key = m[1].toLowerCase();
+  return (FACTOR_NAMES[key] || key.replace(/_/g, " ")) + " — риск " + lvl;
+}
+
+/* ===== Утилиты ===== */
+function riskClass(level){
+  const l = String(level || "").toUpperCase();
+  return l === "LOW" ? "badge-low" : l === "HIGH" ? "badge-high" : "badge-medium";
+}
+
+function translateRisk(level){
+  if(!level) return "—";
+  const map = { LOW:"Низкий", MEDIUM:"Средний", HIGH:"Высокий", UNKNOWN:"Не определён" };
+  return map[String(level).toUpperCase()] || String(level);
+}
+
+function money(v){
+  if(v == null) return "—";
+  const n = Number(v);
+  return Number.isFinite(n) ? n.toLocaleString("ru-RU") + " ₸" : "—";
+}
+
+function formatNumber(v){
+  const n = Number(v);
+  return Number.isFinite(n) ? n.toLocaleString("ru-RU", { maximumFractionDigits:2 }) : "—";
+}
+
+function formatFileSize(b){
+  if(b < 1024) return b + " Б";
+  if(b < 1048576) return (b / 1024).toFixed(2) + " КБ";
+  return (b / 1048576).toFixed(2) + " МБ";
+}
 
 // FastAPI отдаёт detail строкой, объектом или списком — приводим к тексту
 function formatError(d){
-  if (!d) return '';
-  if (typeof d === 'string') return d;
-  if (Array.isArray(d)) return d.map(x => x.msg || JSON.stringify(x)).join('; ');
-  if (d.missing_columns) return d.message + '. Не хватает колонок: ' + d.missing_columns.join(', ');
-  if (d.message) return d.message;
-  return JSON.stringify(d);
+  if(!d) return "";
+  if(typeof d === "string") return d;
+  if(Array.isArray(d)) return d.map(x => x.msg || JSON.stringify(x)).join("; ");
+  if(d.missing_columns) return (d.message || "Ошибка") + ". Не хватает колонок: " + d.missing_columns.join(", ");
+  if(d.message) return d.message;
+  return JSON.stringify(d, null, 2);
 }
 
-function analyzeFile(file){
-  if (busy) return;
-  busy = true;
-  hideError();
-  loading.classList.add('show');
-  resultPanel.classList.remove('show');
+function showError(msg){
+  errorBox.textContent = "Не удалось выполнить анализ\n\n" + msg;
+  errorBox.classList.add("active");
+}
+function clearError(){
+  errorBox.textContent = "";
+  errorBox.classList.remove("active");
+}
 
-  let i = 0;
-  loadSteps.forEach(li => li.classList.remove('active'));
-  const stepTimer = setInterval(() => {
-    loadSteps.forEach(li => li.classList.remove('active'));
-    if (loadSteps[i]) loadSteps[i].classList.add('active');
-    i = Math.min(i + 1, loadSteps.length - 1);
-  }, 700);
-
-  const stop = () => { clearInterval(stepTimer); loading.classList.remove('show'); busy = false; };
-
-  if (MOCK_MODE){
-    setTimeout(() => { stop(); renderResult(MOCK_RESPONSE); }, 2200);
-    return;
+function setLoadingStep(n){
+  for(let i = 1; i <= 4; i++){
+    const el = $("loading" + i);
+    el.classList.toggle("active", i === n);
+    el.classList.toggle("done", i < n);
   }
-
-  const formData = new FormData();
-  formData.append('file', file);
-
-  fetch(API_URL, { method: 'POST', body: formData })
-    .then(async res => {
-      const body = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(formatError(body.detail) || ('Ошибка сервера (' + res.status + ')'));
-      return body;
-    })
-    .then(body => {
-      // ответ бэкенда: { filename, records_count, ml_result: {...} }
-      const result = body.ml_result || body;
-      if (result.error) throw new Error(result.error);
-      stop();
-      renderResult(result);
-    })
-    .catch(err => {
-      stop();
-      showError(err.message || 'Не удалось проанализировать файл');
-    });
 }
 
-// техническое имя показателя -> понятное название
-const FACTOR_NAMES = {
-  current_ratio:        'Низкая текущая ликвидность',
-  quick_ratio:          'Низкая быстрая ликвидность',
-  cash_ratio:           'Недостаточно денежных средств',
-  debt_growth:          'Быстрый рост долга',
-  debt_to_equity:       'Высокая долговая нагрузка на капитал',
-  debt_to_ebitda:       'Долг велик относительно EBITDA',
-  revenue_growth:       'Снижение выручки',
-  net_margin:           'Низкая рентабельность продаж',
-  profit_margin:        'Низкая рентабельность продаж',
-  ebitda_margin:        'Низкая маржа EBITDA',
-  roe:                  'Низкая рентабельность капитала',
-  roa:                  'Низкая рентабельность активов',
-  equity_ratio:         'Низкая доля собственного капитала',
-  receivables_growth:   'Рост дебиторской задолженности',
-  payables_growth:      'Рост кредиторской задолженности',
-  interest_coverage:    'Слабое покрытие процентов'
-};
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-// "current_ratio=100" -> { text: 'Низкая текущая ликвидность', level: 'высокий' }
-function prettifyFactor(raw){
-  const m = String(raw).match(/^\s*([a-z0-9_]+)\s*=\s*(-?[\d.]+)\s*$/i);
-  if (!m) return { text: raw };
-  const key = m[1].toLowerCase();
-  const score = parseFloat(m[2]);
-  const level = score >= 70 ? 'высокий' : score >= 40 ? 'средний' : 'низкий';
-  return { text: FACTOR_NAMES[key] || key.replace(/_/g, ' '), level };
-}
-
-function money(n){ return n == null ? '—' : Number(n).toLocaleString('ru-RU') + ' ₸'; }
-const RISK_RU = {LOW:'низкий', MEDIUM:'средний', HIGH:'высокий'};
-
-function renderResult(data){
-  const company = data.company_name || (data.companies || []).join(', ') || '—';
-  document.getElementById('resCompany').textContent = company;
-  document.getElementById('resScore').textContent = data.overall_risk_score ?? '—';
-
-  const badge = document.getElementById('resBadge');
-  const lvl = (data.risk_level || '').toUpperCase();
-  badge.textContent = RISK_RU[lvl] || lvl || '—';
-  badge.className = 'badge badge-' + lvl;
-
-  document.getElementById('resFin').textContent = RISK_RU[(data.financial_risk||'').toUpperCase()] || data.financial_risk || '—';
-  document.getElementById('resTx').textContent = RISK_RU[(data.transaction_anomaly_risk||'').toUpperCase()] || data.transaction_anomaly_risk || '—';
-  document.getElementById('resReq').textContent = money(data.requested_credit_limit);
-  document.getElementById('resRec').textContent = money(data.recommended_credit_limit);
-
-  const factors = document.getElementById('resFactors');
-  factors.innerHTML = '';
-  (data.top_risk_factors || []).forEach(f => {
-    const p = prettifyFactor(f);
-    const d = document.createElement('div');
-    d.textContent = '• ' + p.text + (p.level ? ' — риск ' + p.level : '');
-    factors.appendChild(d);
-  });
-
-  const actions = document.getElementById('resActions');
-  actions.innerHTML = '';
-  (data.recommended_actions || []).forEach(a => {
-    const d = document.createElement('div'); d.textContent = '✓ ' + a; actions.appendChild(d);
-  });
-
-  resultPanel.classList.add('show');
+function esc(v){
+  return String(v ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+                        .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
 }
 </script>
 </body>
