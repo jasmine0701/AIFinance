@@ -66,6 +66,7 @@ section{padding:75px 0}
 .endpoint-info{margin-top:12px;font-size:13px;font-weight:700}
 .endpoint-csv{color:var(--blue)}
 .endpoint-excel{color:#7c3aed}
+.endpoint-pdf{color:#e05252}
 .limit-box{display:none;margin-top:18px}
 .limit-box.active{display:block}
 .limit-box label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
@@ -174,18 +175,18 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
   <div class="container">
     <div class="section-head">
       <h2>Анализ финансовой отчётности</h2>
-      <p>Загрузите CSV или Excel-файл. Система автоматически определит нужный ML endpoint.</p>
+      <p>Загрузите финансовый файл (CSV, Excel или несколько PDF). Система автоматически распознает данные и выполнит ML-анализ.</p>
     </div>
     <div class="upload-card">
       <div class="upload-title">Финансовая отчетность компании</div>
-      <div class="upload-subtitle">CSV отправляется напрямую в Batch ML, а XLSX/XLS проходит через Excel Controller.</div>
+      <div class="upload-subtitle">CSV → Batch ML, Excel/PDF → Умный парсер и единый ML контроллер.</div>
 
       <div class="upload-zone" id="uploadZone">
         <div class="upload-icon">↑</div>
-        <strong>Перетащите файл сюда</strong>
-        <small>.xlsx · .xls · .csv</small><br>
-        <label for="fileInput" class="file-button">Выбрать файл →</label>
-        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+        <strong>Перетащите файлы сюда</strong>
+        <small>.xlsx · .xls · .csv · .pdf</small><br>
+        <label for="fileInput" class="file-button">Выбрать файл(ы) →</label>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.pdf" multiple>
       </div>
 
       <div class="file-info" id="fileInfo">
@@ -194,9 +195,9 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
         <div class="endpoint-info" id="endpointInfo"></div>
       </div>
 
-      <!-- Лимит нужен только для CSV (/analyze-batch) -->
+      <!-- Поле лимита теперь активно для всех файлов -->
       <div class="limit-box" id="limitBox">
-        <label for="requestedLimit">Запрошенный кредитный лимит (для CSV)</label>
+        <label for="requestedLimit">Запрошенный кредитный лимит</label>
         <div class="limit-input-wrap">
           <input type="number" id="requestedLimit" value="60000000" min="1" step="1000000">
           <div class="limit-currency">₸</div>
@@ -238,8 +239,8 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
       <p>От загрузки отчётности до готового риск-профиля.</p>
     </div>
     <div class="steps">
-      <div class="step"><div class="step-number">1</div><h3>Загрузка</h3><p>Пользователь загружает финансовую отчётность в формате CSV или Excel.</p></div>
-      <div class="step"><div class="step-number">2</div><h3>AI-анализ</h3><p>ML-модели анализируют финансовые показатели, риск и аномалии.</p></div>
+      <div class="step"><div class="step-number">1</div><h3>Загрузка</h3><p>Загрузите финансовую отчётность (включая сканы PDF, Excel и CSV).</p></div>
+      <div class="step"><div class="step-number">2</div><h3>AI-анализ</h3><p>ML-модели и парсеры извлекают показатели, выявляют риски и аномалии.</p></div>
       <div class="step"><div class="step-number">3</div><h3>Решение</h3><p>Система формирует риск-профиль и рекомендуемый кредитный лимит.</p></div>
     </div>
   </div>
@@ -249,8 +250,17 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 
 <script>
 /* ===== API ===== */
-const CSV_API_URL   = "http://127.0.0.1:8003/analyze-batch";   // CSV  -> Batch ML
-const EXCEL_API_URL = "http://127.0.0.1:8000/upload/excel";    // XLSX/XLS -> Excel Controller
+// Определяем базовые URL динамически на основе текущего хоста или переменных
+// На локальной машине это будет 127.0.0.1, на Render — ваш облачный домен
+const CONTROLLER_HOST = window.location.origin; // Например: https://my-app.onrender.com
+
+// ВАЖНО: CSV-запрос должен уходить на ML-сервер.
+// Замените YOUR_ML_SERVER_URL на реальный домен вашего ML-сервиса на Render после его создания.
+const ML_SERVER_HOST  = "https://ВАШ-ML-СЕРВЕР.onrender.com";
+
+const CSV_API_URL   = ML_SERVER_HOST + "/analyze-batch";
+const EXCEL_API_URL = CONTROLLER_HOST + "/upload/excel";
+const PDF_API_URL   = CONTROLLER_HOST + "/upload/pdf";
 
 /* ===== DOM ===== */
 const $ = id => document.getElementById(id);
@@ -260,64 +270,88 @@ const fileInput = $("fileInput"), uploadZone = $("uploadZone"), fileInfo = $("fi
       loading = $("loading"), errorBox = $("errorBox"), resultSection = $("results"),
       resultsContainer = $("resultsContainer"), summaryGrid = $("summaryGrid"), resultCount = $("resultCount");
 
-let selectedFile = null;
+let selectedFiles = [];
 let busy = false;
 
 const extOf = f => f.name.split(".").pop().toLowerCase();
 
 /* ===== Выбор файла ===== */
 fileInput.addEventListener("change", function(){
-  if(this.files && this.files.length) setSelectedFile(this.files[0]);
+  if(this.files && this.files.length) handleFiles(this.files);
 });
 uploadZone.addEventListener("dragover", e => { e.preventDefault(); uploadZone.classList.add("dragover"); });
 uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("dragover"));
 uploadZone.addEventListener("drop", e => {
   e.preventDefault();
   uploadZone.classList.remove("dragover");
-  if(e.dataTransfer.files.length) setSelectedFile(e.dataTransfer.files[0]);
+  if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
 });
 
-function setSelectedFile(file){
+function handleFiles(fileList){
   clearError();
-  const ext = extOf(file);
-  if(!["csv","xlsx","xls"].includes(ext)){
-    selectedFile = null;
+  const files = Array.from(fileList);
+  const exts = files.map(f => extOf(f));
+  const isAllPdf = exts.every(e => e === "pdf");
+
+  const ext = exts[0];
+  if(!["csv","xlsx","xls","pdf"].includes(ext)){
+    selectedFiles = [];
     fileInfo.classList.remove("active");
     limitBox.classList.remove("active");
     analyzeBtn.disabled = true;
-    showError("Поддерживаются только файлы CSV, XLSX и XLS.");
+    showError("Поддерживаются только файлы CSV, XLSX, XLS и PDF.");
     return;
   }
-  selectedFile = file;
-  fileName.textContent = file.name;
-  fileSize.textContent = formatFileSize(file.size);
+
+  if(files.length > 1 && !isAllPdf) {
+     selectedFiles = [];
+     showError("Одновременно можно загружать несколько файлов только для PDF-отчетов (чтобы собрать историю за несколько лет). Для Excel/CSV загружайте по одному файлу.");
+     return;
+  }
+
+  selectedFiles = files;
+
+  if(files.length > 1) {
+      fileName.textContent = "Выбрано файлов: " + files.length;
+      const totalSize = files.reduce((acc, f) => acc + f.size, 0);
+      fileSize.textContent = formatFileSize(totalSize);
+  } else {
+      fileName.textContent = files[0].name;
+      fileSize.textContent = formatFileSize(files[0].size);
+  }
 
   if(ext === "csv"){
-    endpointInfo.textContent = "CSV → /analyze-batch → ML :8003";
+    endpointInfo.textContent = "CSV → /analyze-batch → ML :8001";
     endpointInfo.className = "endpoint-info endpoint-csv";
-    limitBox.classList.add("active");
-  }else{
+  } else if (ext === "pdf") {
+    endpointInfo.textContent = "PDF → /upload/pdf → AI Parser → ML";
+    endpointInfo.className = "endpoint-info endpoint-pdf";
+  } else {
     endpointInfo.textContent = "XLSX/XLS → /upload/excel → Controller :8000";
     endpointInfo.className = "endpoint-info endpoint-excel";
-    limitBox.classList.remove("active");
   }
+
   fileInfo.classList.add("active");
+  limitBox.classList.add("active"); // ТЕПЕРЬ ВСЕГДА АКТИВНО
   analyzeBtn.disabled = false;
 }
 
-analyzeBtn.addEventListener("click", () => { if(selectedFile) analyzeFile(selectedFile); });
+analyzeBtn.addEventListener("click", () => { if(selectedFiles.length) analyzeFile(); });
 
 /* ===== Анализ ===== */
-async function analyzeFile(file){
-  if(busy) return;
+async function analyzeFile(){
+  if(busy || !selectedFiles.length) return;
   busy = true;
   clearError();
   resultSection.classList.remove("active");
   resultsContainer.innerHTML = "";
   summaryGrid.innerHTML = "";
 
-  const isCsv = extOf(file) === "csv";
-  const url = isCsv ? CSV_API_URL : EXCEL_API_URL;
+  const ext = extOf(selectedFiles[0]);
+  const isCsv = ext === "csv";
+  const isPdf = ext === "pdf";
+
+  const url = isCsv ? CSV_API_URL : (isPdf ? PDF_API_URL : EXCEL_API_URL);
 
   analyzeBtn.disabled = true;
   loading.classList.add("active");
@@ -325,19 +359,22 @@ async function analyzeFile(file){
 
   try{
     const formData = new FormData();
-    formData.append("file", file);
 
-    if(isCsv){
-      const limit = Number(requestedLimit.value);
-      if(!Number.isFinite(limit) || limit <= 0) throw new Error("Укажите корректный кредитный лимит.");
-      formData.append("requested_limit", String(Math.round(limit)));
+    if (isPdf) {
+        selectedFiles.forEach(f => formData.append("files", f));
+    } else {
+        formData.append("file", selectedFiles[0]);
     }
+
+    // ТЕПЕРЬ ЛИМИТ ОТПРАВЛЯЕТСЯ ДЛЯ ВСЕХ ТИПОВ ФАЙЛОВ
+    const limit = Number(requestedLimit.value);
+    if(!Number.isFinite(limit) || limit <= 0) throw new Error("Укажите корректный кредитный лимит.");
+    formData.append("requested_limit", String(Math.round(limit)));
 
     await sleep(250);
     setLoadingStep(2);
     setTimeout(() => { if(busy) setLoadingStep(3); }, 900);
 
-    // Content-Type не указываем — браузер сам добавит multipart boundary
     let response;
     try{
       response = await fetch(url, { method:"POST", body:formData });
@@ -360,7 +397,6 @@ async function analyzeFile(file){
         (formatError(data.detail) || data.error || JSON.stringify(data, null, 2)));
     }
 
-    // Excel Controller оборачивает ответ: { filename, records_count, ml_result: {...} }
     const payload = (data && data.ml_result) ? data.ml_result : data;
     if(payload && payload.error && !Array.isArray(payload.results)) throw new Error(payload.error);
 
@@ -517,7 +553,6 @@ function renderList(items){
   return "<ul>" + items.map(i => "<li>" + esc(String(i)) + "</li>").join("") + "</ul>";
 }
 
-/* ===== Факторы риска: "current_ratio=100" -> "Низкая текущая ликвидность — риск высокий" ===== */
 const FACTOR_NAMES = {
   current_ratio:"Низкая текущая ликвидность", quick_ratio:"Низкая быстрая ликвидность",
   cash_ratio:"Недостаточно денежных средств", debt_growth:"Быстрый рост долга",
@@ -567,7 +602,6 @@ function formatFileSize(b){
   return (b / 1048576).toFixed(2) + " МБ";
 }
 
-// FastAPI отдаёт detail строкой, объектом или списком — приводим к тексту
 function formatError(d){
   if(!d) return "";
   if(typeof d === "string") return d;

@@ -13,6 +13,8 @@ from fastapi import UploadFile, HTTPException
 
 from service.financial_parser import process_pdf, save_to_excel
 
+from service.pdf_parser.financial_parser import IntelligentFinancialParser
+
 UPLOAD_DIR = Path(__file__).resolve().parent.parent / "controller" / "uploads"
 UPLOAD_DIR.mkdir(exist_ok=True, parents=True)
 
@@ -65,10 +67,48 @@ class PdfService:
         return saved_path
 
     @staticmethod
-    def parse_financial_report(file_path: Path) -> Dict[str, Any]:
-        """Вызывает ваш парсер и приводит результат к JSON-safe виду."""
-        raw_result = process_pdf(file_path)
-        return {key: _sanitize_for_json(val) for key, val in raw_result.items()}
+    def parse_financial_report(file_path: str):
+        """
+        Обновленная функция для AIFinance API.
+        Сохраняет совместимость со старым форматом ответа,
+        но использует новый движок.
+        """
+        # 1. Запускаем новый движок
+        parser = IntelligentFinancialParser(filepath=file_path)
+        result = parser.parse()
+
+        # 2. Форматируем результат для совместимости с ML API и существующими Excel экспортами
+        # Твой текущий код ожидает определенный JSON. Перекладываем данные:
+
+        formatted_data = {
+            "company": result.company,
+            "currency": result.currency,
+            "unit": result.unit,
+            "warnings": result.metadata.warnings,
+            "data": []
+        }
+
+        for period in result.periods:
+            formatted_data["data"].append({
+                "Year": period.year,
+                "Revenue": period.revenue,
+                "EBITDA": period.ebitda,
+                "Operating Profit": period.operating_profit,  # Важно: отделяем от EBITDA
+                "Net Profit": period.net_profit,
+                "Debt": period.debt,
+                "Cash": period.cash,
+                "Current Assets": period.current_assets,
+                "Current Liabilities": period.current_liabilities,
+                "Receivables": period.receivables,
+                "Payables": period.payables,
+                "Equity": period.equity,
+                "Total Assets": period.assets
+            })
+
+        return formatted_data
+
+    # Остальные методы (save_upload, process_upload_and_export_excel)
+    # остаются БЕЗ ИЗМЕНЕНИЙ, так как они вызывают parse_financial_report.
 
     @classmethod
     def process_upload(cls, file: UploadFile) -> Dict[str, Any]:
