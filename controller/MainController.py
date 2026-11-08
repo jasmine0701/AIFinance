@@ -1,23 +1,27 @@
 import os
 import sys
 import shutil
-import pymupdf as fitz
-import pandas as pd
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import List
 
-sys.path.append(str(BASE_DIR))
-
+import fitz  # PyMuPDF
+import pandas as pd
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
+# 1. Сначала объявляем BASE_DIR
+BASE_DIR = Path(__file__).resolve().parent
+
+# 2. Добавляем путь в sys.path
+sys.path.append(str(BASE_DIR))
+
+# 3. Затем импортируем локальные сервисы
 from service.PdfService import PdfService
 from service.ExcelService import ExcelService
 from service.pdf_parser.financial_parser import IntelligentFinancialParser
-
-BASE_DIR = Path(__file__).resolve().parent
 
 app = FastAPI(title="Financial Reports Uploader")
 
