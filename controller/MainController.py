@@ -7,7 +7,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import List
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(BASE_DIR))
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
