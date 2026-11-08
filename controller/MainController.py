@@ -5,7 +5,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import List
 
-import fitz  # PyMuPDF
+import pymupdf as fitz
 import pandas as pd
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
