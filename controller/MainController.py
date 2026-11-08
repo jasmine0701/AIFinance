@@ -12,13 +12,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
-# 1. Сначала объявляем BASE_DIR
 BASE_DIR = Path(__file__).resolve().parent
-
-# 2. Добавляем путь в sys.path
+# Добавляем родительскую директорию (/app), где лежит папка service
+sys.path.append(str(BASE_DIR.parent))
 sys.path.append(str(BASE_DIR))
 
-# 3. Затем импортируем локальные сервисы
 from service.PdfService import PdfService
 from service.ExcelService import ExcelService
 from service.pdf_parser.financial_parser import IntelligentFinancialParser
