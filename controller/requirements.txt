@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pandas
+requests
+httpx
+python-multipart
+pymupdf
+img2table[tesseract]
+pytesseract
+pdf2image
+openpyxl
