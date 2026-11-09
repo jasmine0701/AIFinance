@@ -256,11 +256,12 @@ const CONTROLLER_HOST = window.location.origin; // Например: https://my-
 
 // ВАЖНО: CSV-запрос должен уходить на ML-сервер.
 // Замените YOUR_ML_SERVER_URL на реальный домен вашего ML-сервиса на Render после его создания.
-const ML_SERVER_HOST  = "https://ВАШ-ML-СЕРВЕР.onrender.com";
+// Берет текущий IP-адрес или домен из адресной строки браузера
+const SERVER_HOST = window.location.hostname;
 
-const CSV_API_URL   = ML_SERVER_HOST + "/analyze-batch";
-const EXCEL_API_URL = CONTROLLER_HOST + "/upload/excel";
-const PDF_API_URL   = CONTROLLER_HOST + "/upload/pdf";
+const CSV_API_URL   = `http://${SERVER_HOST}:8001/analyze-batch`;
+const EXCEL_API_URL = `http://${SERVER_HOST}:8000/upload/excel`;
+const PDF_API_URL   = `http://${SERVER_HOST}:8000/upload/pdf`;
 
 /* ===== DOM ===== */
 const $ = id => document.getElementById(id);
